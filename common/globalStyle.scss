@@ -1,0 +1,12 @@
+$padding: 20rpx;	/* 内边距 */
+$borderRadius: 16rpx;
+
+$boxShadow: 0 6rpx 20rpx -6rpx rgba(0,0,0,.1);	/* 卡片阴影 */
+
+/* 通用的容器样式 */
+.baseContianer{
+	box-shadow: $boxShadow;
+	border-radius: $borderRadius;
+	background-color: #FFFFFF;
+	padding: $padding;
+}

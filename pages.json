@@ -1,0 +1,38 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "景德镇瑶里景区"
+			}
+		},
+		{
+			"path": "pages/buy-ticket/buy-ticket",
+			"style": {
+				"navigationBarTitleText": "门票订单",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/scenic-management/scenic-management",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/order-details/order-details",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"enablePullDownRefresh": false
+			}
+		}
+		
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "景德镇瑶里景区",
+		"navigationBarBackgroundColor": "#18b566",
+		"backgroundColor": "#f9f9f9"
+	}
+}
