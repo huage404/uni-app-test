@@ -1,25 +1,20 @@
-export const request = (config)=>{
-	// 设置请求头
-	const baseUrl = 'http://gyt-api.test.ganyoutong.cn'
-	
-	config.url = baseUrl + config.url
-	
-	if(!config.data){
-		config.data = {}
-	}
-	
-	return new Promise((resolve, reject)=>{
-		uni.request(config).then(response=>{
-						
-			// 处理异常
-			if(response[0]){
-				reject({message: '网络超时'})
+function minReuqest(config){
+	const BASE_URL = 'http://cesishahe.free.idcfengye.com'
+	config.url = BASE_URL + config.url
+	console.log('config',config)
+	return new Promise(function(resolve,reject){
+		uni.request({...config}).then((data)=>{
+			let [error, res]  = data;
+			if(!error){
+				resolve(res.data)
 			}else{
-				let response = response[1].data
-				resolve(response)
+				console.log('请求超时',error)
+				reject(error)
 			}
-		}).catch(error=>{
-			reject(error)
+		}).catch(err=>{
+			reject(err)
 		})
 	})
 }
+
+export default minReuqest

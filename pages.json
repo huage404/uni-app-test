@@ -3,7 +3,7 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "景德镇瑶里景区"
+				"navigationBarTitleText": "鄱阳湖湿地公园"
 			}
 		},
 		{
@@ -31,7 +31,7 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "景德镇瑶里景区",
+		"navigationBarTitleText": "鄱阳湖湿地公园",
 		"navigationBarBackgroundColor": "#18b566",
 		"backgroundColor": "#f9f9f9"
 	}

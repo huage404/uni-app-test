@@ -1,8 +1,8 @@
 <template>
 	<view class="container">
 		<swiper class="swiper" :autoplay="true">
-			<template v-for="(item,index) in bannerList">
-				<swiper-item :key="index">
+			<template>
+				<swiper-item v-for="(item,index) in bannerList" :key="index">
 					<image class="banner" :src="item"></image>
 				</swiper-item>
 			</template>
@@ -34,8 +34,9 @@
 					<view class="module-content">
 						<view class="tickets" v-for="(item,index) in ticketsList" :key="index">
 							<text class="tickets-info">{{item.text}}</text>
-							<text class="price">￥0.00</text>
-							<button size="mini" :class="{disabled: item.isDisabled}" @click="toNavPage(0)">{{item.buttonText}}</button>
+							<text class="price">￥{{item.price}}</text>
+							<button size="mini" :class="{disabled: item.isDisabled}"
+								@click="toNavPage(0)">{{item.buttonText}}</button>
 						</view>
 					</view>
 				</view>
@@ -58,35 +59,97 @@
 
 <script>
 	import data from "@/mock/data.json"
-	
+	import {getTicketData,payOrder} from "../../API/index.js"
+	import {getFilePath} from "../../utils/index.js"
+	import baseImage from "@/static/base-image.jpg"
+
+
 	export default {
 		data() {
 			return {
-				baseInfo: {},		// 基本信息				
-				bannerList: [],		// 轮播图
-				ticketsList: [],	// 门票列表
-				moduleData: [],		// 景区介绍
-				navList: []			// 导航
+				baseInfo: {}, // 基本信息				
+				bannerList: [], // 轮播图
+				ticketsList: [], // 门票列表
+				moduleData: [], // 景区介绍
+				navList: [] // 导航
 			}
 		},
 		onLoad() {
-			this.baseInfo = data.baseInfo
-			this.bannerList = data.bannerList
-			this.ticketsList = data.ticketsList
 			this.moduleData = data.moduleData
 			this.navList = data.navList
+			this.getTicketData()
+			this.login()
 		},
 		methods: {
 			toNavPage(index) {
-				if(index === 0){
+				if (index === 0) {
 					uni.navigateTo({
 						url: `../buy-ticket/buy-ticket`
 					})
-				}else{
+				} else {
 					uni.navigateTo({
 						url: `../scenic-management/scenic-management?active=${index-1}`
 					})
 				}
+			},
+			// 获取景点门票数据
+			getTicketData(){
+				getTicketData('1342359998658895873').then(({data}) => {
+					this.baseInfo = {
+						title: data.scenicName,
+						time: data.openTime,
+						address: data.address
+					}
+					this.bannerList = data.filePath.map(item => {
+						return getFilePath(item)
+					})
+					this.ticketsList = data.ticketRates.map(item => {
+						return {
+							text: item.fullName,
+							price: item.retailPrice,
+							buttonText: '了解更多',
+							isDisabled: false,
+							number: 0
+						}
+					})
+				}).catch(err => {
+					console.log('失败', err)
+				}).finally(() => {
+					// 当返回数据中，没有图片信息，则给予一张默认图片用于展示
+					if (this.bannerList.length === 0) {
+						this.bannerList.push(baseImage)
+					}
+				})
+			},
+			testPay(){
+				let params = {
+					commPric: '0.01',
+					tradeName: '江西明月山天沐温泉'
+				}
+				console.log('params',params)
+				payOrder({
+					commPric: '0.01',
+					tradeName: '江西明月山天沐温泉'
+				}).then(res=>{
+					console.log('支付',res)
+					
+					uni.requestPayment({
+						provider: 'alipay',
+						orderInfo: res.msg
+					}).then(ress=>{
+						console.log('测试',ress)
+					})
+				}).catch(err=>{
+					console.log('支付错误',err)
+				})
+				
+			},
+			login(){
+				uni.login({
+					success(res) {
+						console.log('ressss',res)
+					}	
+				})
 			}
 		},
 	}
