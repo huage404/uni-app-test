@@ -5,12 +5,31 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state:{
-		authCode: '',
-		userId: ''
+		resourceId: '2021002132633235',	// 资源产品 Id
+		userId: ''						// 用户 Id
 	},
 	mutations:{
-		setAuthCode(state,authCode){
-			state.authCode = authCode
+		setUserId(state,userId){
+			state.userId = userId
+			this.commit('setStorage',{
+				key: 'userId',
+				data: userId
+			})
+		},
+		setResourceId(state,resourceId){
+			resourceId && (state.resourceId = resourceId)
+			this.commit('setStorage',{
+				key: 'resourceId',
+				data: state.resourceId
+			})
+		},
+		setStorage(state,{key,data}){
+			uni.setStorage({key, data})
+		}
+	},
+	actions:{
+		setUserIdSync(context,userId){
+			context.commit('setUserId',userId)
 		}
 	}
 })

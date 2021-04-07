@@ -27,7 +27,6 @@
 			<!-- 导航 End -->
 
 			<view class="introduce">
-
 				<!-- 门票 Start -->
 				<view class="module">
 					<view class="module-title"><text class="icon"></text>门票详情</view>
@@ -59,42 +58,39 @@
 
 <script>
 	import data from "@/mock/data.json"
-	import {getTicketData,payOrder} from "../../API/index.js"
 	import {getFilePath} from "../../utils/index.js"
 	import baseImage from "@/static/base-image.jpg"
-
+	import {mapState,mapActions,mapMutations} from "vuex"
 
 	export default {
 		data() {
 			return {
-				baseInfo: {}, // 基本信息				
-				bannerList: [], // 轮播图
-				ticketsList: [], // 门票列表
-				moduleData: [], // 景区介绍
-				navList: [] // 导航
+				baseInfo: {}, 		// 基本信息				
+				bannerList: [], 	// 轮播图
+				ticketsList: [], 	// 门票列表
+				moduleData: [], 	// 景区介绍
+				navList: []			// 导航
 			}
 		},
+		computed:{
+			...mapState(['resourceId','userId'])
+		},
 		onLoad() {
-			this.moduleData = data.moduleData
-			this.navList = data.navList
-			this.getTicketData()
-			this.login()
+			this.init()
 		},
 		methods: {
-			toNavPage(index) {
-				if (index === 0) {
-					uni.navigateTo({
-						url: `../buy-ticket/buy-ticket`
-					})
-				} else {
-					uni.navigateTo({
-						url: `../scenic-management/scenic-management?active=${index-1}`
-					})
-				}
+			...mapActions(['setUserIdSync','setResourceId']),
+			...mapMutations(['setResourceId']),
+			init(){
+				this.moduleData = data.moduleData
+				this.navList = data.navList
+				this.getTicketData()
+				this.login()
 			},
+			
 			// 获取景点门票数据
 			getTicketData(){
-				getTicketData('1342359998658895873').then(({data}) => {
+				this.$API.getTicketData(this.resourceId).then(({data}) => {
 					this.baseInfo = {
 						title: data.scenicName,
 						time: data.openTime,
@@ -112,8 +108,6 @@
 							number: 0
 						}
 					})
-				}).catch(err => {
-					console.log('失败', err)
 				}).finally(() => {
 					// 当返回数据中，没有图片信息，则给予一张默认图片用于展示
 					if (this.bannerList.length === 0) {
@@ -121,37 +115,31 @@
 					}
 				})
 			},
-			testPay(){
-				let params = {
-					commPric: '0.01',
-					tradeName: '江西明月山天沐温泉'
-				}
-				console.log('params',params)
-				payOrder({
-					commPric: '0.01',
-					tradeName: '江西明月山天沐温泉'
-				}).then(res=>{
-					console.log('支付',res)
-					
-					uni.requestPayment({
-						provider: 'alipay',
-						orderInfo: res.msg
-					}).then(ress=>{
-						console.log('测试',ress)
-					})
-				}).catch(err=>{
-					console.log('支付错误',err)
-				})
-				
-			},
+			
 			login(){
+				let that = this
 				uni.login({
 					success(res) {
-						console.log('ressss',res)
+						that.getUserId(res.authCode)
 					}	
 				})
+				this.setResourceId()
+			},
+			
+			getUserId(authcode){
+				this.$API.getPermission({
+					authcode: authcode,
+					resourceId: this.resourceId
+				}).then(res=>{
+					this.setUserIdSync(res.data.userId)
+				})
+			},
+			
+			toNavPage(index) {
+				let url = index === 0 ? `../buy-ticket/buy-ticket` : `../scenic-management/scenic-management?active=${index-1}`
+				uni.navigateTo({url})
 			}
-		},
+		}
 	}
 </script>
 

@@ -19,7 +19,7 @@
 				</view>
 			</view>
 		</view>
-
+			
 		<view class="contacts">
 			<view class="title">联系人</view>
 			<view class="cell">
@@ -31,14 +31,15 @@
 				<input class="input-text" placeholder-class="placeholder-style" type="number" placeholder="请填写您的电话号码">
 			</view>
 		</view>
-
+			{{resourceId}}
+			{{userId}}
 		<!-- 底部 tabBar -->
 		<view class="tabBar">
 			<view class="price-container">
 				<text>合计:</text>
 				<text class="price">￥{{totalPrices.toFixed(2)}}</text>
 			</view>
-			<button class="btn" @click="submitOrder">提交订单</button>
+			<button class="btn" @click="aliPay">提交订单</button>
 		</view>
 	</view>
 </template>
@@ -46,16 +47,23 @@
 <script>
 	import {request} from '../../utils/request.js'
 	import data from "@/mock/data.json"
+	import {mapState} from "vuex"
+	
 	export default {
 		data() {
 			return {
 				orderName: '',
-				ticketList: []
+				ticketList: [],
+				userId: uni.getStorageSync('userId'),
+				resourceId: uni.getStorageSync('resourceId'),
 			};
 		},
 		onLoad(option){
 			this.orderName = data.ticketsList[option.index]['text']
 			this.ticketList = [data.ticketsList[option.index]]
+		},
+		computed:{
+			...mapState(['resourceId'])
 		},
 		methods: {
 			addCount(item) {
@@ -64,10 +72,23 @@
 			reduceCount(item) {
 				item.number = item.number > 0 ? item.number - 1 : 0
 			},
-			submitOrder(){
-				uni.showToast({
-					title: '暂无预定'
-				})
+			aliPay(){
+				let params = {
+					commPric: '0.01',
+					tradeName: '鄱阳湖湿地公园',
+					resourceId: this.resourceId,
+					userId: this.userId
+				}
+				console.log('params',params)
+				/* this.$API.payOrder(params).then(res=>{		
+					console.log('payOrder',res)
+					uni.requestPayment({
+						provider: 'alipay',
+						orderInfo: res.msg
+					}).then(ress=>{
+						console.log('测试',ress)
+					})
+				}) */
 			}
 		},
 		computed: {

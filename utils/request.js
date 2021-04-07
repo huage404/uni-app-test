@@ -1,7 +1,6 @@
 function minReuqest(config){
 	const BASE_URL = 'http://cesishahe.free.idcfengye.com'
 	config.url = BASE_URL + config.url
-	console.log('config',config)
 	return new Promise(function(resolve,reject){
 		uni.request({...config}).then((data)=>{
 			let [error, res]  = data;
