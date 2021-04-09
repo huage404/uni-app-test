@@ -6,7 +6,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state:{
 		resourceId: '2021002132633235',	// 资源产品 Id
-		userId: ''						// 用户 Id
+		userId: '',						// 用户 Id
+		test: "Hello World"
 	},
 	mutations:{
 		setUserId(state,userId){

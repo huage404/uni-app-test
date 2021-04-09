@@ -52,6 +52,10 @@ export default {
 		})
 	},
 
+	/*
+	 * 支付成功后的回调
+	 * @description 支付成功后，向后端发起请求，修改订单状态
+	 */
 	notifyUrl(){
 		return minReuqest({
 			url: `/pay/notifyUrl`

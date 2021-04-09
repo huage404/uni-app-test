@@ -125,7 +125,7 @@
 				})
 				this.setResourceId()
 			},
-			
+			// 获取用户 userId
 			getUserId(authcode){
 				this.$API.getPermission({
 					authcode: authcode,
@@ -134,12 +134,12 @@
 					this.setUserIdSync(res.data.userId)
 				})
 			},
-			
+			// 点击导航跳转链接
 			toNavPage(index) {
-				let url = index === 0 ? `../buy-ticket/buy-ticket` : `../scenic-management/scenic-management?active=${index-1}`
+				let url = index === 0 ? `../tickets-list/tickets-list` : `../scenic-management/scenic-management?active=${index-1}`
 				uni.navigateTo({url})
 			}
-		}
+		}	
 	}
 </script>
 

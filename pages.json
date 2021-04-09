@@ -1,15 +1,15 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/index/index",
+			"path": "pages/home/home",
 			"style": {
 				"navigationBarTitleText": "鄱阳湖湿地公园"
 			}
 		},
 		{
-			"path": "pages/buy-ticket/buy-ticket",
+			"path": "pages/tickets-list/tickets-list",
 			"style": {
-				"navigationBarTitleText": "门票订单",
+				"navigationBarTitleText": "门票列表",
 				"enablePullDownRefresh": false
 			}
 

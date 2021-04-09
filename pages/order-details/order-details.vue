@@ -31,8 +31,7 @@
 				<input class="input-text" placeholder-class="placeholder-style" type="number" placeholder="请填写您的电话号码">
 			</view>
 		</view>
-			{{resourceId}}
-			{{userId}}
+
 		<!-- 底部 tabBar -->
 		<view class="tabBar">
 			<view class="price-container">
@@ -54,44 +53,11 @@
 			return {
 				orderName: '',
 				ticketList: [],
-				userId: uni.getStorageSync('userId'),
-				resourceId: uni.getStorageSync('resourceId'),
 			};
 		},
-		onLoad(option){
-			this.orderName = data.ticketsList[option.index]['text']
-			this.ticketList = [data.ticketsList[option.index]]
-		},
-		computed:{
-			...mapState(['resourceId'])
-		},
-		methods: {
-			addCount(item) {
-				item.number++
-			},
-			reduceCount(item) {
-				item.number = item.number > 0 ? item.number - 1 : 0
-			},
-			aliPay(){
-				let params = {
-					commPric: '0.01',
-					tradeName: '鄱阳湖湿地公园',
-					resourceId: this.resourceId,
-					userId: this.userId
-				}
-				console.log('params',params)
-				/* this.$API.payOrder(params).then(res=>{		
-					console.log('payOrder',res)
-					uni.requestPayment({
-						provider: 'alipay',
-						orderInfo: res.msg
-					}).then(ress=>{
-						console.log('测试',ress)
-					})
-				}) */
-			}
-		},
 		computed: {
+			...mapState(['resourceId','test','userId']),
+			// 订单时间，默认取当天
 			orderDate(){
 				let nowDate = new Date()
 				let month = nowDate.getMonth()+1
@@ -103,12 +69,49 @@
 						
 				return `${addZero(month)}-${addZero(day)}`
 			},
+			// 计算总价
 			totalPrices() {
 				let total = 0;
 				this.ticketList.forEach((item) => {
 					total += Number(item.price) * item.number
 				})
 				return isNaN(total) ? 0 : total
+			}
+		},
+		onLoad(option){
+			this.orderName = data.ticketsList[option.index]['text']
+			this.ticketList = [data.ticketsList[option.index]]
+			
+			console.log('huage',this.test)
+			console.log('userId',this.userId)
+			console.log('resourceId',this.resourceId)
+		},
+		methods: {
+			addCount(item) {f
+				item.number++
+			},
+			reduceCount(item) {
+				item.number = item.number > 0 ? item.number - 1 : 0
+			},
+			aliPay(){
+				let params = {
+					commPric: this.totalPrices,
+					tradeName: '鄱阳湖湿地公园',
+					resourceId: this.resourceId,
+					userId: this.userId
+				}
+				// 1. 创建支付订单
+				this.$API.payOrder(params).then(response=>{		
+					// 2. 发起支付弹窗
+					uni.requestPayment({
+						provider: 'alipay',			// 服务商类型
+						orderInfo: response.msg		// 支付订单号
+					}).then((res)=>{
+						console.log('支付成功后的响应',res)
+						// 3. 支付成功后，修改订单状态
+						this.$API.notifyUrl()
+					})
+				})
 			}
 		}
 	}
