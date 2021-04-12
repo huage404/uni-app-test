@@ -1,4 +1,8 @@
 <template>
+	<!-- 门票列表页面
+			页面路径: pages/tickets-list
+			功能: 选择不同的门票套餐
+	-->
 	<view>
 		<view class="banner">
 			<text class="title">门票订购</text>

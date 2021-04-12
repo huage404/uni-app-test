@@ -1,4 +1,8 @@
 <template>
+	<!-- 订单详情页面
+			页面路径: pages/order-details
+			功能: 输入订单信息，创建待支付订单，完成后进入支付页面
+	-->
 	<view class="order-details">
 		<view class="details">
 			<view class="order-name">{{orderName}}</view>
@@ -19,7 +23,6 @@
 				</view>
 			</view>
 		</view>
-			
 		<view class="contacts">
 			<view class="title">联系人</view>
 			<view class="cell">

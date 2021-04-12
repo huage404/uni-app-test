@@ -1,4 +1,8 @@
 <template>
+	<!-- 首页页面
+				页面路径: pages/home
+				功能: 展示景点信息，入口页面
+	-->
 	<view class="container">
 		<swiper class="swiper" :autoplay="true">
 			<template>
@@ -96,7 +100,7 @@
 						time: data.openTime,
 						address: data.address
 					}
-					this.bannerList = data.filePath.map(item => {
+					/* this.bannerList = data.filePath.map(item => {
 						return getFilePath(item)
 					})
 					this.ticketsList = data.ticketRates.map(item => {
@@ -107,7 +111,10 @@
 							isDisabled: false,
 							number: 0
 						}
-					})
+					}) */
+					
+					this.moduleData = data.resourceScenicInfo.introduction
+					
 				}).finally(() => {
 					// 当返回数据中，没有图片信息，则给予一张默认图片用于展示
 					if (this.bannerList.length === 0) {

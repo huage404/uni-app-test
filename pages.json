@@ -26,8 +26,14 @@
 				"navigationBarTitleText": "订单详情",
 				"enablePullDownRefresh": false
 			}
+		},
+		{
+			"path": "pages/test/test",
+			"style": {
+				"navigationBarTitleText": "测试页面",
+				"enablePullDownRefresh": false
+			}
 		}
-		
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
