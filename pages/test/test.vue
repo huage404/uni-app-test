@@ -20,7 +20,7 @@
 				ticketOrderParam: {
 					commPric: "0.01", 			// 订单总价
 					tradeName: "鄱阳湖湿地公园", 			// 景区名称
-					resourceId: "2021002132633235", 		// 景区Id
+					resourceId: "1347468348069781505", 		// 景区Id
 					userId: "", 			// 用户登陆后的 userId
 					orderContactList: [ 	// 订单联系人列表
 						{
@@ -69,7 +69,7 @@
 					success({authCode}){
 						that.$API.getPermission({
 							authcode: authCode,
-							resourceId: '2021002132633235'
+							resourceId: '1347468348069781505'
 						}).then(({data})=>{
 							console.log('data',data)
 							that.setUserIdSync(data.userId)

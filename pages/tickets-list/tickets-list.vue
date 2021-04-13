@@ -14,9 +14,9 @@
 			<view class="module-title"><text class="icon"></text> 门票详情</view>
 			<view class="module-content">
 				<view class="tickets" v-for="(item,index) in ticketsList" :key="index">
-					<text class="tickets-info">{{item.text}}</text>
-					<text class="price">￥0.00</text>
-					<button :class="{disabled: item.isDisabled}" size="mini" @click="toOrderDetails(index)">{{item.buttonText}}</button>
+					<text class="tickets-info">{{item.productName}}</text>
+					<text class="price">￥{{getPrice(item.ticketPriceCalendars)}}</text>
+					<button size="mini" @click="toOrderDetails(index)">立即购买</button>
 				</view>
 			</view>
 		</view>
@@ -25,12 +25,12 @@
 </template>
 
 <script>
-	import data from "@/mock/data.json"
-	
+	import {getFilePath} from "../../utils/index.js"
 	export default {
 		onLoad(option) {
-			this.ticketsList = data.ticketsList
-			this.bgUrl = data.bannerList[0]
+			let data = uni.getStorageSync('tcketData')
+			this.bgUrl = getFilePath(data.resourcePictures[0]['filePath'])
+			this.init()
 		},
 		data() {
 			return {
@@ -40,10 +40,31 @@
 			};
 		},
 		methods:{
+			init(){
+				this.ticketsList = uni.getStorageSync('ticketsList')
+			},
 			toOrderDetails(index){				
 				uni.navigateTo({
 					url: `../order-details/order-details?index=${index}`
 				})
+			},
+			
+			/**
+			 * 返回一个套餐价格
+			 * @description 返回今天之后的第一个套餐价格
+			 * @param {Array} list - 价格数组 
+			 * @return {Number}
+			 */
+			getPrice(list){
+				let nowTime = new Date().getTime()
+				let newArr = []
+				list.forEach(item=>{
+					let useTime = new Date(item.useDate)
+					if(useTime > nowTime){
+						newArr.push(item)
+					}
+				})
+				return Number(newArr[0]['dealPrice']).toFixed(2)
 			}
 		}
 	}

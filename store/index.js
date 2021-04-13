@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state:{
-		resourceId: '1341959994957959170',	// 资源产品 Id
+		resourceId: '1347468348069781505',	// 资源产品 Id
 		userId: '',						// 用户 Id
 		resourceName: '',
 		test: "Hello World"
@@ -18,7 +18,7 @@ const store = new Vuex.Store({
 			resourceId && (state.resourceId = resourceId)
 		},
 		setResourceName(state,resourceName){
-			resourceId && (state.resourceName = resourceName)
+			resourceName && (state.resourceName = resourceName)
 		},
 		
 		// 將 vuex 中的数据保存到 storage 中
@@ -31,9 +31,9 @@ const store = new Vuex.Store({
 		setUserIdSync(context,userId){
 			context.commit('setUserId',userId)
 		},
-		// 保存用户Id
-		setResourceNameSync(context,userId){
-			context.commit('setUserId',userId)
+		// 保存资源名
+		setResourceNameSync(context,setResourceName){
+			context.commit('setResourceName',setResourceName)
 		}
 	}
 })

@@ -13,8 +13,8 @@
 			</view>
 			<view class="ticket" v-for="(item,index) in ticketList" :key="index">
 				<view class="info">
-					<view>{{item.text}}</view>
-					<view class="price">￥{{Number(item.price).toFixed(2)}}</view>
+					<view>{{item.productName}}</view>
+					<view class="price">￥{{item.price}}</view>
 				</view>
 				<view class="number">
 					<view class="btn left" @click="reduceCount(item)">-</view>
@@ -23,15 +23,42 @@
 				</view>
 			</view>
 		</view>
-		<view class="contacts">
+		
+		<!-- 旅客信息 -->
+		<!-- <view class="module">
+			<view class="title">旅客信息</view>
+			<view class="cell">
+				<text class="label">出行人</text>
+				<text class="right-text">
+					添加出行人
+					<text class="iconfont icon-youjiantou"></text>
+				</text>
+			</view>
+			<view class="cell flex">
+				<view>
+					<text class="label m-r-20">用户姓名</text>
+					<text class="label">15797782050</text>
+				</view>
+				<text class="iconfont icon-cha-"></text>
+			</view>
+		</view>	 -->	
+				
+		<view class="module">
+			<view class="cell">
+				<text class="label">留言</text>
+				<input class="input-text" placeholder-class="placeholder-style" type="number" placeholder="选填您的备注信息">
+			</view>
+		</view>
+		
+		<view class="module">
 			<view class="title">联系人</view>
 			<view class="cell">
 				<text class="label">姓名</text>
-				<input class="input-text" placeholder-class="placeholder-style" type="text" placeholder="请填写您的姓名">
+				<input class="input-text" placeholder-class="placeholder-style" type="text" v-model="ticketOrderParam.orderContactList[0]['name']" placeholder="请填写您的姓名">
 			</view>
 			<view class="cell">
 				<text class="label">电话号码</text>
-				<input class="input-text" placeholder-class="placeholder-style" type="number" placeholder="请填写您的电话号码">
+				<input class="input-text" placeholder-class="placeholder-style" type="number" v-model="ticketOrderParam.orderContactList[0]['phone']" placeholder="请填写您的电话号码">
 			</view>
 		</view>
 
@@ -41,14 +68,13 @@
 				<text>合计:</text>
 				<text class="price">￥{{totalPrices.toFixed(2)}}</text>
 			</view>
-			<button class="btn" @click="aliPay">提交订单</button>
+			<button class="btn" @click="aliPay">立即支付</button>
 		</view>
 	</view>
 </template>
 
 <script>
 	import {request} from '../../utils/request.js'
-	import data from "@/mock/data.json"
 	import {mapState} from "vuex"
 	
 	export default {
@@ -56,10 +82,40 @@
 			return {
 				orderName: '',
 				ticketList: [],
+				ticketOrderParam: {
+					commPric: "0.01", 			// 订单总价
+					tradeName: "", 			// 景区名称
+					resourceId: "", 		// 景区Id
+					userId: "", 			// 用户登陆后的 userId
+					orderContactList: [ 	// 订单联系人列表
+						{
+							name: "", 		// 联系人姓名
+							phone: "" 		// 联系人电话
+						}
+					],
+					orderTicket: { 			// 订单联系人列表
+						orderMemo: "备忘录", 		// 备忘录
+						orderQuantity: "1", 	// 订单数
+						originType: "2", 	// 订单来源
+						productCode: "", 	// 产品编号（门票编码）
+						apiOrderType: "", 	// 订单类型（分销商名称）
+						apiOrderNo: "", 	// 订单编码（本地订单号）
+						remark: "备忘录2", 		// 备注
+						travelDate: "2021-04-12" 		// 出行时间
+					},
+					orderTouristList: [
+						{ 	// 游客列表
+							certNo: "345678909878909876", 		// 证件号
+							certType: "身份证", 		// 证件类型
+							name: "test", 			// 游客姓名
+							phone: "13755676545" 			// 游客电话
+						}
+					]
+				}
 			};
 		},
 		computed: {
-			...mapState(['resourceId','test','userId']),
+			...mapState(['resourceId','test','userId','resourceName']),
 			// 订单时间，默认取当天
 			orderDate(){
 				let nowDate = new Date()
@@ -82,39 +138,78 @@
 			}
 		},
 		onLoad(option){
-			this.orderName = data.ticketsList[option.index]['text']
-			this.ticketList = [data.ticketsList[option.index]]
+			let data = uni.getStorageSync('ticketsList')
 			
-			console.log('huage',this.test)
-			console.log('userId',this.userId)
-			console.log('resourceId',this.resourceId)
+		   this.orderName = data[option.index]['productName']
+			
+			this.ticketList = [{
+				productName: data[option.index]['productName'],
+				price: this.getPrice(data[option.index]['ticketPriceCalendars']),
+				number: 0
+			}]
 		},
 		methods: {
-			addCount(item) {f
+			addCount(item) {
 				item.number++
 			},
 			reduceCount(item) {
 				item.number = item.number > 0 ? item.number - 1 : 0
 			},
 			aliPay(){
-				let params = {
-					commPric: this.totalPrices,
-					tradeName: '鄱阳湖湿地公园',
-					resourceId: this.resourceId,
-					userId: this.userId
-				}
+				let params = {}
+				this.ticketOrderParam.tradeName = this.resourceName
+				// this.ticketOrderParam.commPric = this.totalPrices
+				this.ticketOrderParam.resourceId = this.resourceId
+				this.ticketOrderParam.userId = this.userId
+				
+				
 				// 1. 创建支付订单
-				this.$API.payOrder(params).then(response=>{		
+				this.$API.payOrder(this.ticketOrderParam).then(response=>{		
 					// 2. 发起支付弹窗
 					uni.requestPayment({
 						provider: 'alipay',			// 服务商类型
 						orderInfo: response.msg		// 支付订单号
 					}).then((res)=>{
-						console.log('支付成功后的响应',res)
-						// 3. 支付成功后，修改订单状态
-						this.$API.notifyUrl()
+						console.log('res',res)
+						this.showMsg(res[1]['resultCode'])
 					})
 				})
+			},
+			// 判断用户是否支付成功
+			showMsg(code){
+				const hash = {
+					"4": "无权限调用: 个人小程序应用没有开放小程序支付能力",
+					"9000": "订单处理成功",
+					"8000": "正在处理中。支付结果未知（有可能已经支付成功）",
+					"4000": "订单处理失败",
+					"6001": "用户中途取消",
+					"6002": "网络连接出错",
+					"6004": "处理结果未知（有可能已经成功）",
+				}
+				if(code === '9000'){
+					// 3. 支付成功后，修改订单状态
+					this.$API.notifyUrl()
+				}
+				uni.showModal({
+					content: hash[code]
+				})
+			},
+			/**
+			 * 返回一个套餐价格
+			 * @description 返回今天之后的第一个套餐价格
+			 * @param {Array} list - 价格数组 
+			 * @return {Number}
+			 */
+			getPrice(list){
+				let nowTime = new Date().getTime()
+				let newArr = []
+				list.forEach(item=>{
+					let useTime = new Date(item.useDate)
+					if(useTime > nowTime){
+						newArr.push(item)
+					}
+				})
+				return newArr[0]['dealPrice']
 			}
 		}
 	}
@@ -204,29 +299,39 @@
 				}
 			}
 		}
+	}
 
-		.contacts {
-			.title {
-				font-size: 28rpx;
+	
+	.module {
+		.title {
+			font-size: 28rpx;
+		}
+		.cell {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		
+			.label {
+				flex: 1;
+				font-size: 24rpx;
 			}
-
-			.cell {
+		
+			.input-text {
+				flex: 3;
+				font-size: 24rpx;
+			}
+		
+			/deep/ .placeholder-style {
+				font-size: 24rpx;
+			}
+			
+			.right-text{
+				font-size: 24rpx;
 				display: flex;
-				justify-content: space-between;
 				align-items: center;
-
-				.label {
-					flex: 1;
-					font-size: 24rpx;
-				}
-
-				.input-text {
-					flex: 3;
-					font-size: 24rpx;
-				}
-
-				/deep/ .placeholder-style {
-					font-size: 24rpx;
+				color: rgba(0,0,0,.5);
+				.iconfont{
+					font-size: inherit;
 				}
 			}
 		}
@@ -262,5 +367,9 @@
 			color: #FFFFFF;
 			background-image: linear-gradient(to right, #ff5b2f, #ef051f);
 		}
+	}
+
+	.m-r-20{
+		margin-right: 20rpx;
 	}
 </style>
