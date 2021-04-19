@@ -13,6 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+.icon-geren2:before {
+  content: "\e611";
+}
+
 .icon-lujing:before {
   content: "\e625";
 }

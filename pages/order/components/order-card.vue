@@ -1,23 +1,23 @@
 <template>
 	<view class="order-module">
 		<view class="header">
-			<view class="resource-name">南昌欢乐谷</view>
-			<text class="order-state">待付款</text>
+			<view class="resource-name">{{cardData.resourceName}}</view>
+			<text class="order-state">{{orderState[cardData.state]}}</text>
 		</view>
 		<view class="content">
-			<view class="icon"></view>
+			<view class="icon"><text class="iconfont icon-geren2"></text></view>
 			<view class="info">
-				<view>南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷</view>
-				<view class="paratext">门票种类：成人票门票</view>
-				<view class="paratext">出行时间：2021-04-19</view>
+				<view>{{cardData.orderName}}</view>
+				<view class="paratext">门票种类：{{cardData.ticketType}}</view>
+				<view class="paratext">出行时间：{{cardData.travelTime}}</view>
 			</view>
 			<view class="price-container">
-				<view class="price">￥11220.30</view>
-				<view class="count">X 1</view>
+				<view class="price">￥{{cardData.unitPrice}}</view>
+				<view class="count">X {{cardData.count}}</view>
 			</view>
 		</view>
 		<view class="summarize">
-			合计：<text class="total-price">￥11220.30</text>
+			合计：<text class="total-price">￥{{cardData.totalPrices}}</text>
 		</view>
 		<view class="btn-list">
 			<text class="btn pay">立即付款</text>
@@ -28,7 +28,26 @@
 
 <script>
 	export default {
-		
+		data(){
+			return {
+				orderState: ['待付款','待出行','待退款','已退款']
+			}
+		},
+		props: {
+			cardData:{
+				type: Object,
+				default: {
+					resourceName: "南昌欢乐谷",
+					state: 0,
+					orderName: "南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷",
+					ticketType: "成人票门票",
+					travelTime: "2021-04-19",
+					unitPrice: "11220.30",
+					totalPrices: "11220.30",
+					count: 1
+				}
+			}
+		}
 		
 	}
 </script>
@@ -56,21 +75,26 @@
 		.content{
 			background: #fafafa;
 			box-sizing: border-box;
-			padding: 30rpx $padding;
+			padding: $padding;
 			height: 200rpx;
 			display: flex;
 			justify-content: space-between;
 			align-items: flex-start;
 			.icon{
 				flex: 1;
-				background-color: $themeColor;
+				.icon-geren2{
+					color: $themeColor;
+				}
 			}
 			.info{
 				flex: 7;
 				font-size: 30rpx;
+				font-weight: 700;
 				.paratext{
 					font-size: 26rpx;
 					color: #999999;
+					font-weight: 400;
+					line-height: 1.5;
 				}
 			}
 			.price-container{

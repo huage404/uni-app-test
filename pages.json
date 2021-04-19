@@ -33,18 +33,7 @@
 				"navigationBarTitleText": "测试页面",
 				"enablePullDownRefresh": false
 			}
-		}
-	    ,{
-            "path" : "pages/my/my",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "个人中心",
-                "enablePullDownRefresh": false,
-				"transparentTitle": "always"
-            }
-            
-        }
-        ,{
+		},{
             "path" : "pages/order/order",
             "style" :                                                                                    
             {
@@ -71,12 +60,6 @@
 				"text": "订单",
 				"iconPath": "static/tabbar-icon/order.png",
 				"selectedIconPath":"static/tabbar-icon/order-o.png"
-			},
-			{
-				"pagePath": "pages/my/my",
-				"text": "个人中心",
-				"iconPath": "static/tabbar-icon/my.png",
-				"selectedIconPath":"static/tabbar-icon/my-o.png"
 			}
 		]
 	},

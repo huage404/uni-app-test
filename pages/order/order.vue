@@ -11,7 +11,7 @@
 		
 		<!-- 订单列表 start -->
 		<view class="order-list">
-			<orderCard></orderCard>
+			<orderCard v-for="(item, index) in listData" :key="index" :cardData="item"></orderCard>
 		</view>
 		<!-- 订单列表 end -->
 	</view>
@@ -45,7 +45,38 @@
 						text: '退款单'
 					}
 				],
-				test: '测试'
+				listData: [
+					{
+						resourceName: "南昌欢乐谷",
+						state: 0,
+						orderName: "南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷",
+						ticketType: "成人票门票",
+						travelTime: "2021-04-19",
+						unitPrice: "11220.30",
+						totalPrices: "11220.30",
+						count: 1
+					},
+					{
+						resourceName: "南昌欢乐谷",
+						state: 0,
+						orderName: "南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷",
+						ticketType: "成人票门票",
+						travelTime: "2021-04-19",
+						unitPrice: "11220.30",
+						totalPrices: "11220.30",
+						count: 1
+					},
+					{
+						resourceName: "南昌欢乐谷",
+						state: 0,
+						orderName: "南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷",
+						ticketType: "成人票门票",
+						travelTime: "2021-04-19",
+						unitPrice: "11220.30",
+						totalPrices: "11220.30",
+						count: 1
+					}
+				]
 			}
 		},
 		components:{ orderCard },
@@ -97,7 +128,7 @@
 		}
 	
 		.order-list{
-			
+			padding-bottom: 100rpx;
 		}
 	}
 
