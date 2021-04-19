@@ -198,6 +198,7 @@
 					this.$API.placeOrder(param).then(res=>{
 						console.log(res)
 						console.table(res)
+						
 					})
 				}
 				

@@ -88,7 +88,7 @@
 					"text": "预订须知"
 				},
 				{
-					"icon": "icon-gonglve",
+					"icon": "icon-lujing",
 					"text": "温馨提示"
 				}
 			],		// 导航
@@ -144,11 +144,11 @@
 				 * @param {Object} resourceScenicInfo 
 				 */
 				function handleResourceScenicInfo(resourceScenicInfo){
-					let {introduction,playReadme,trafficInformation} = resourceScenicInfo
+					const {introduction,playReadme,trafficInformation} = resourceScenicInfo
 					
-					let introductionNode = htmlToNode(introduction)
-					let playReadmeNode = htmlToNode(playReadme)
-					let trafficInformationNode = htmlToNode(trafficInformation)
+					const introductionNode = htmlToNode(introduction)
+					const playReadmeNode = htmlToNode(playReadme)
+					const trafficInformationNode = htmlToNode(trafficInformation)
 					
 					// 渲染到页面
 					this.introduction = introductionNode

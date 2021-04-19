@@ -34,11 +34,57 @@
 				"enablePullDownRefresh": false
 			}
 		}
-	],
+	    ,{
+            "path" : "pages/my/my",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "个人中心",
+                "enablePullDownRefresh": false,
+				"transparentTitle": "always"
+            }
+            
+        }
+        ,{
+            "path" : "pages/order/order",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "订单",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+	
+	"tabBar":{
+		"color":"#333333",
+		"selectedColor":"#2a9efd",
+		"backgroundColor": "#FFFFFF",
+		"list": [
+			{
+				"pagePath": "pages/home/home",
+				"text": "首页",
+				"iconPath": "static/tabbar-icon/home.png",
+				"selectedIconPath":"static/tabbar-icon/home-o.png"
+			},
+			{
+				"pagePath": "pages/order/order",
+				"text": "订单",
+				"iconPath": "static/tabbar-icon/order.png",
+				"selectedIconPath":"static/tabbar-icon/order-o.png"
+			},
+			{
+				"pagePath": "pages/my/my",
+				"text": "个人中心",
+				"iconPath": "static/tabbar-icon/my.png",
+				"selectedIconPath":"static/tabbar-icon/my-o.png"
+			}
+		]
+	},
+	
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "鄱阳湖湿地公园",
-		"navigationBarBackgroundColor": "#18b566",
-		"backgroundColor": "#f9f9f9"
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#FFFFFF"
 	}
 }

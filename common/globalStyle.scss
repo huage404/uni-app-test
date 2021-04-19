@@ -3,6 +3,12 @@ $borderRadius: 16rpx;
 
 $boxShadow: 0 6rpx 20rpx -6rpx rgba(0,0,0,.1);	/* 卡片阴影 */
 
+$themeColor: #2a9efd;
+$themeBgColor: #f9fdff;
+
+
+$borderColor: rgba(0,0,0,.1);
+
 /* 通用的容器样式 */
 .baseContianer{
 	box-shadow: $boxShadow;

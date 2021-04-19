@@ -4,111 +4,124 @@
 			功能: 用来测试一些 API 接口
 	-->
 	<view class="test-page">
-			<button class="cell" type="default" @click="getTicketData">获取景区资源</button>
-			<button class="cell" type="default" @click="createTicketOrder">创建订单</button>
-			<button class="cell" type="default" @click="login">立即登陆</button>
-			<button class="cell" type="default" @click="payImmediately">立即支付</button>
+		<button class="cell" type="default" @click="getTicketData">获取景区资源</button>
+		<button class="cell" type="default" @click="createTicketOrder">创建订单</button>
+		<button class="cell" type="default" @click="login">立即登陆</button>
+		<button class="cell" type="default" @click="payImmediately">立即支付</button>
 	</view>
 </template>
 
 <script>
-	import {mapState,mapActions} from 'vuex'
-	
+	import {
+		mapState,
+		mapActions
+	} from 'vuex'
+
 	export default {
 		data() {
 			return {
 				ticketOrderParam: {
-					commPric: "0.01", 			// 订单总价
-					tradeName: "鄱阳湖湿地公园", 			// 景区名称
-					resourceId: "1347468348069781505", 		// 景区Id
-					userId: "", 			// 用户登陆后的 userId
-					orderContactList: [ 	// 订单联系人列表
-						{
-							name: "联系人姓名", 		// 联系人姓名
-							phone: "15700000000" 		// 联系人电话
-						}
-					],
-					orderTicket: { 			// 订单联系人列表
-						orderMemo: "备忘录", 		// 备忘录
-						orderQuantity: "1", 	// 订单数
-						originType: "2", 	// 订单来源
-						productCode: "", 	// 产品编号（门票编码）
-						apiOrderType: "", 	// 订单类型（分销商名称）
-						apiOrderNo: "", 	// 订单编码（本地订单号）
-						remark: "备忘录2", 		// 备注
-						travelDate: "2021-04-12" 		// 出行时间
+					// "appId": "", 						// 分配给数据对接的appId
+					// "sign": "", 							// 平台提供的签名字符串signKey
+					// "ticketSlotId": "", 					// 根据这个id判断是否是多时间段
+					
+					"commPric": "0.01",						// 订单价格
+					"tradeName": "鄱阳湖湿地公园",			// 资源名
+					"resourceId": "1341959994957959170",	// 资源 ID
+					"userId": "",							// 用户 ID（通过登陆获取）
+					
+					"orderTicket": { 						// 订单的基本信息
+						"orderMemo": "订单备注", 			// 订单备注
+						"orderQuantity": 1,					// 订单数量
+						"travelDate": "2021-04-20 12:12:12", 		// date 游玩时间
+						
+						"productCode": "MP2765116212", 		// 产品编码
+						// "originType": "1", 				// 默认传1
+						// "apiOrderType": "",				// 外部分销类型（如：广西旅发，须统一）
+						// "apiOrderNo": "", 				// 外部分销编号
 					},
-					orderTouristList: [
-						{ 	// 游客列表
-							certNo: "345678909878909876", 		// 证件号
-							certType: "身份证", 		// 证件类型
-							name: "xzh", 			// 游客姓名
-							phone: "13755676545" 			// 游客电话
-						}
-					]
+					
+					"orderContactList": [{ 					// 联系人列表
+						"name": "xzh", 						// 联系人姓名
+						"phone": "15797782051" 				// 联系人手机号
+					}],
+					
+					"orderTouristList": [{ 					// 游客列表
+						"certNo": "360123200006242111", 	// 游客证件号
+						"certType": "身份证", 				// 游客证件类型（身份证、护照、台胞证、港澳通行证、大陆居民往来台湾通行证） 
+						"name": "xzh", 						// 游客姓名
+						"phone": "15797782051" 				// 游客手机号
+					}]
 				}
 			};
 		},
-		computed:{ ...mapState(['resourceId','userId']) },
+		computed: {
+			...mapState(['resourceId', 'userId'])
+		},
 		methods: {
-			...mapActions(['setUserIdSync','setResourceNameSync']),
+			...mapActions(['setUserIdSync', 'setResourceNameSync']),
 			// 获取景区资源
-			getTicketData(){
-				this.$API.getTicketData(this.resourceId).then(({data})=>{
+			getTicketData() {
+				this.$API.getTicketData('1341959994957959170').then(({
+					data
+				}) => {
 					uni.setStorage({
 						key: 'tcketData',
-						data: data 
+						data: data
 					})
 				})
 			},
-			
+
 			// 登陆
-			login(){
+			login() {
 				let that = this
 				uni.login({
-					success({authCode}){
+					success({
+						authCode
+					}) {
 						that.$API.getPermission({
 							authcode: authCode,
-							resourceId: '1347468348069781505'
-						}).then(({data})=>{
-							console.log('data',data)
+							resourceId: '1341959994957959170'
+						}).then(({
+							data
+						}) => {
+							console.log('data', data)
 							that.setUserIdSync(data.userId)
 						})
 					}
 				})
 			},
-			
+
 			// 创建门票订单
 			createTicketOrder() {
 				let data = uni.getStorageSync('tcketData')
-				
+
 				this.ticketOrderParam.userId = this.userId
-				
-				this.$API.payOrder(this.ticketOrderParam).then(res=>{
-					console.log('创建门票订单',res.msg)
+
+				this.$API.payOrder(this.ticketOrderParam).then(response => {
+					
+					console.log('this is handle')
+					let [tradeNo, outTradeNo] = response.msg.split('out_trade_no:')
 					uni.requestPayment({
-						provider: 'alipay',
-						orderInfo: res.msg,
-						success({resultCode}){
-							console.log('调用成功',resultCode)
-							if(resultCode === '6001'){
-								uni.showModal({
-									content: '用户中途取消了支付'
-								})
-							}
-						},
-						fail(error){
-							console.log('支付失败',error)
-						},
-						complete(){
-							console.log('上面这两货是憨批')
+						provider: 'alipay', // 服务商类型
+						orderInfo: tradeNo // 支付订单号
+					}).then((res) => {
+						if (res[1]['resultCode'] === '9000') {
+							// 3. 支付成功后，修改订单状态
+							this.$API.placeOrder({
+								tradeNo,
+								outTradeNo
+							}).then(res => {
+								console.log(res)
+								console.table(res)
+							})
 						}
 					})
 				})
 			},
-			
+
 			// 判断用户是否支付成功
-			showMsg(code){
+			showMsg(code) {
 				const hash = {
 					"4": "无权限调用: 个人小程序应用没有开放小程序支付能力",
 					"9000": "订单处理成功",
@@ -118,14 +131,14 @@
 					"6002": "网络连接出错",
 					"6004": "处理结果未知（有可能已经成功）",
 				}
-				if(code === '9000'){
+				if (code === '9000') {
 					this.$API.notifyUrl()
 				}
 			},
-			
+
 			// 立即支付
-			payImmediately(){
-				
+			payImmediately() {
+
 			}
 		}
 	}

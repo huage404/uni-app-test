@@ -1,8 +1,9 @@
 import minReuqest from "../utils/request.js"
 
 
-export default {
 
+// 资源相关
+const resources = {
 	/**
 	 * @description 获取景点产品数据
 	 * @method GET
@@ -12,9 +13,11 @@ export default {
 		return minReuqest({
 			url: `/alipay/ticket/${id}`
 		})
-	},
+	}
+}
 
-
+// 支付相关
+const payRelated = {
 	/**
 	 * 获取授权信息参数
 	 * @description 返回数据中包含一个 userId ，用来作为参数调用 payOrder
@@ -30,8 +33,7 @@ export default {
 			data: data
 		})
 	},
-
-
+	
 	/**
 	 * 获取支付订单
 	 * @description 发起支付，成功后调用 notifyUrl
@@ -47,7 +49,7 @@ export default {
 			data: data
 		})
 	},
-
+	
 	/**
 	 * 支付成功后的回调
 	 * @description 支付成功后，向后端发起请求，修改订单状态
@@ -80,4 +82,12 @@ export default {
 			data: data
 		})
 	}
+}
+
+
+export default {
+	// 资源相关
+	...resources,
+	// 支付相关
+	...payRelated	
 }

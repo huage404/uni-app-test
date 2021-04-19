@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state:{
-		resourceId: '1347468348069781505',	// 资源产品 Id
+		resourceId: '1341959994957959170',	// 资源产品 Id
 		userId: '',						// 用户 Id
 		resourceName: '',
 		test: "Hello World"
