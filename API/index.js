@@ -56,5 +56,28 @@ export default {
 		return minReuqest({
 			url: `/pay/notifyUrl`
 		})
+	},
+	
+	/**
+	 * 撤销订单
+	 * @description 撤销订单
+	 */
+	cancelOrder(data){
+		return minReuqest({
+			url: `/pay/cancelOrder`,
+			data: data
+		})
+	},
+	
+	/**
+	 * 下单接口
+	 * @description 下单接口
+	 * @param {Object} data 
+	 */
+	placeOrder(data){
+		return minReuqest({
+			url: `/order/placeOrder`,
+			data: data
+		})
 	}
 }

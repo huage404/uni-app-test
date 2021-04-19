@@ -66,7 +66,7 @@
 
 <script>
 	import {getFilePath,htmlToNode} from "../../utils/index.js"
-	import baseImage from "@/static/base-image.jpg"
+	// import baseImage from "@/static/base-image.jpg"
 	import {mapState,mapActions,mapMutations} from "vuex"
 
 	export default {
@@ -133,9 +133,9 @@
 					})
 				}).finally(() => {
 					// 当返回数据中，没有图片信息，则给予一张默认图片用于展示
-					if (this.bannerList.length === 0) {
+					/* if (this.bannerList.length === 0) {
 						this.bannerList.push(baseImage)
-					}
+					} */
 				})
 				
 				/**

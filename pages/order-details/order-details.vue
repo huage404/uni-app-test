@@ -156,7 +156,6 @@
 				item.number = item.number > 0 ? item.number - 1 : 0
 			},
 			aliPay(){
-				let params = {}
 				this.ticketOrderParam.tradeName = this.resourceName
 				// this.ticketOrderParam.commPric = this.totalPrices
 				this.ticketOrderParam.resourceId = this.resourceId
@@ -164,19 +163,27 @@
 				
 				
 				// 1. 创建支付订单
-				this.$API.payOrder(this.ticketOrderParam).then(response=>{		
+				this.$API.payOrder(this.ticketOrderParam).then(response=>{
+					
+					/**
+					 * @param {String} tradeNo - 支付宝订单号 
+					 * @param {String} outTradeNo - 赣游通订单号
+					 */
+					let [tradeNo,outTradeNo] = response.msg.split('out_trade_no:')
+					console.log('abc0',tradeNo,outTradeNo)
+					
 					// 2. 发起支付弹窗
 					uni.requestPayment({
 						provider: 'alipay',			// 服务商类型
-						orderInfo: response.msg		// 支付订单号
+						orderInfo: tradeNo		// 支付订单号
 					}).then((res)=>{
 						console.log('res',res)
-						this.showMsg(res[1]['resultCode'])
+						this.showMsg(res[1]['resultCode'],{tradeNo,outTradeNo})
 					})
 				})
 			},
 			// 判断用户是否支付成功
-			showMsg(code){
+			showMsg(code,param){
 				const hash = {
 					"4": "无权限调用: 个人小程序应用没有开放小程序支付能力",
 					"9000": "订单处理成功",
@@ -188,8 +195,12 @@
 				}
 				if(code === '9000'){
 					// 3. 支付成功后，修改订单状态
-					this.$API.notifyUrl()
+					this.$API.placeOrder(param).then(res=>{
+						console.log(res)
+						console.table(res)
+					})
 				}
+				
 				uni.showModal({
 					content: hash[code]
 				})
@@ -217,7 +228,7 @@
 
 <style lang="scss" scoped>
 	@import '@/common/globalStyle.scss';
-
+	// 1额23 
 	.center {
 		display: flex;
 		justify-content: center;
