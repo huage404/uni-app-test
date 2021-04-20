@@ -2,7 +2,8 @@
 	<view class="order-module">
 		<view class="header">
 			<view class="resource-name">{{cardData.gytOrderNo}}</view>
-			<text class="order-state" :style="orderState[cardData.state]['style']">{{orderState[cardData.state]['text']}}</text>
+			<text class="order-state"
+				:style="orderState[cardData.state]['style']">{{orderState[cardData.state]['text']}}</text>
 		</view>
 		<view class="content">
 			<view class="icon"><text class="iconfont icon-geren2"></text></view>
@@ -19,16 +20,15 @@
 		<view class="summarize">
 			合计：<text class="total-price">￥{{cardData.totalPrices}}</text>
 		</view>
-		<view class="btn-list">
-			<text class="btn pay" v-if="false">立即付款</text>
-			<text class="btn" v-if="cardData.state == '3'" @click="handleRefund">取消订单</text>
+		<view class="btn-list" v-if="cardData.state == '2'">
+			<text class="btn" @click="handleRefund">取消订单</text>
 		</view>
 	</view>
 </template>
 
 <script>
 	export default {
-		data(){
+		data() {
 			return {
 				orderState: {
 					'2': {
@@ -53,7 +53,7 @@
 			}
 		},
 		props: {
-			cardData:{
+			cardData: {
 				type: Object,
 				default: {
 					gytOrderNo: "",
@@ -68,45 +68,52 @@
 				}
 			}
 		},
-		methods:{
+		methods: {
 			// 退款按钮
-			handleRefund(){
-				console.log('parm3')
+			handleRefund() {
+				let that = this
 				let platNum = this.cardData.platNum
-				if(platNum){
-					console.log('platNum1',platNum)
-					this.$API.refund(platNum).then(res=>{
-						console.log('ress',res)
-					})
-				}
+				uni.showModal({
+					title: '是否选择退款',
+					content: '发起退款后需要人工审核',
+					success(res) {
+						if (res.confirm) {
+							// 发起退款
+							platNum && that.$API.refund(platNum)
+						} else if (res.cancel) {
+							console.log('用户点击取消')
+						}
+					}
+				})
 			}
 		},
-		mounted(){
-		}
+		computed() {}
 	}
 </script>
 
 <style lang="scss" scoped>
 	@import '@/common/globalStyle.scss';
-	
-	.order-module{
+
+	.order-module {
 		box-shadow: $boxShadow;
 		background: #FFFFFF;
 		margin-top: 20rpx;
 		font-size: 28rpx;
 		line-height: 1.3;
-		.header{
+
+		.header {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
 			height: 80rpx;
 			padding: 0 $padding;
-			
-			.order-state{
+
+			.order-state {
 				color: #fc941d;
 			}
 		}
-		.content{
+
+		.content {
 			background: #fafafa;
 			box-sizing: border-box;
 			padding: $padding;
@@ -114,60 +121,71 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: flex-start;
-			.icon{
+
+			.icon {
 				flex: 1;
-				.icon-geren2{
+
+				.icon-geren2 {
 					color: $themeColor;
 				}
 			}
-			.info{
+
+			.info {
 				flex: 7;
 				font-size: 30rpx;
 				font-weight: 700;
-				.paratext{
+
+				.paratext {
 					font-size: 26rpx;
 					color: #999999;
 					font-weight: 400;
 					line-height: 1.5;
 				}
 			}
-			.price-container{
+
+			.price-container {
 				flex: 2;
 				text-align: right;
-				.price{
+
+				.price {
 					font-size: 24rpx;
 				}
-				.count{
+
+				.count {
 					font-size: 20rpx;
 					color: #999999;
 				}
 			}
 		}
-		.summarize{
+
+		.summarize {
 			text-align: right;
 			line-height: 70rpx;
 			font-size: 30rpx;
 			border-bottom: 2rpx solid $borderColor;
 			margin: 0 $padding;
-			.total-price{
+
+			.total-price {
 				font-size: 28rpx;
 				color: #f7042d;
 			}
 		}
-		.btn-list{
+
+		.btn-list {
 			height: 100rpx;
 			display: flex;
 			align-items: center;
 			flex-direction: row-reverse;
 			padding: 0 $padding;
-			.btn{
+
+			.btn {
 				font-size: 26rpx;
 				padding: 8rpx 14rpx;
 				margin-left: 16rpx;
 				border-radius: 8rpx;
 				border: 2rpx solid $borderColor;
-				
-				&.pay{
+
+				&.pay {
 					color: #ffb814;
 					border-color: #ffb814;
 				}

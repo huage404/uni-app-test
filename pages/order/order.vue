@@ -2,7 +2,8 @@
 	<view class="order">
 		<!-- 导航栏 start -->
 		<view class="nav-list">
-			<view class="nav-item" :class="{active: item.isActive}" @click="handleNavChange(item)" v-for="item in navList" :key="item.index">
+			<view class="nav-item" :class="{active: item.isActive}" @click="handleNavChange(item)"
+				v-for="item in navList" :key="item.index">
 				<text>{{item.text}}</text>
 				<view class="line"></view>
 			</view>
@@ -10,7 +11,7 @@
 		<!-- 导航栏 end -->
 
 		<!-- 订单列表 start -->
-		<view class="order-list" >
+		<view class="order-list">
 			<template v-if="showList">
 				<orderCard v-for="(item, index) in listData" :key="index" :cardData="item"></orderCard>
 			</template>
@@ -24,12 +25,11 @@
 
 <script>
 	import orderCard from './components/order-card.vue'
-	import {mapState} from 'vuex'
+	import { mapState } from 'vuex'
 	export default {
 		data() {
 			return {
-				navList:[
-					{
+				navList: [{
 						index: 0,
 						isActive: true,
 						filterState: '0',
@@ -54,22 +54,38 @@
 						filterState: '6'
 					}
 				],
-				listData: [],
+				listData: [{
+					gytOrderNo: '订单号',
+					state: '3',
+					orderName: '订单名字',
+					travelTime: '出行时间',
+					unitPrice: '订单单价',
+					totalPrices: '订单总价',
+					ticketType: '3',
+					platNum: '支付宝订单号',
+					count: 1
+				}],
 				filterListData: [],
 				showList: true
 			}
 		},
-		computed: { ...mapState(['userId','resourceId','appId']) },
-		components:{ orderCard },
+		computed: {
+			...mapState(['userId', 'resourceId', 'appId'])
+		},
+		components: {
+			orderCard
+		},
 		methods: {
-			init(){
-				if(this.userId){
+			init() {
+				if (this.userId) {
 					let param = {
 						userId: this.userId,
 						resourceId: this.resourceId
 					}
-					this.$API.getOrderList(param).then(({data})=>{
-						this.listData = data.map(item=>{
+					this.$API.getOrderList(param).then(({
+						data
+					}) => {
+						this.listData = data.map(item => {
 							return {
 								gytOrderNo: item.gytOrderNo,
 								state: item.state,
@@ -88,12 +104,12 @@
 				}
 			},
 			// 点击导航触发
-			handleNavChange(el){
+			handleNavChange(el) {
 				// 切换样式
-				function changeStyle(el){
-					this.navList.forEach(item=>{
+				function changeStyle(el) {
+					this.navList.forEach(item => {
 						item.isActive = false
-					})	
+					})
 					el.isActive = true
 				}
 				/**
@@ -101,26 +117,24 @@
 				 * @param {Number} active
 				 * @return {Array} list
 				 */
-				function filterList(state){
+				function filterList(state) {
 					let list = []
-					
-					this.listData.forEach(item=>{
-						if(item.state === state){
+					this.listData.forEach(item => {
+						if (item.state === state) {
 							list.push(item)
 						}
 					})
-					console.log('已触发',list)
 					return list
 				}
-				
+
 				// 切换样式
-				changeStyle.apply(this,[el])
-				
+				changeStyle.apply(this, [el])
+
 				// 切换数据
-				if(el.index !== 0){
-					this.filterListData = filterList.apply(this,[el.filterState])
+				if (el.index !== 0) {
+					this.filterListData = filterList.apply(this, [el.filterState])
 					this.showList = false
-				}else{
+				} else {
 					this.showList = true
 				}
 			}
@@ -134,10 +148,11 @@
 <style lang="scss" scoped>
 	@import '@/common/globalStyle.scss';
 
-	.order{
+	.order {
 		background: $themeBgColor;
 		min-height: 100vh;
-		.nav-list{
+
+		.nav-list {
 			height: 90rpx;
 			display: flex;
 			justify-content: space-around;
@@ -148,8 +163,8 @@
 			border-top: 2rpx solid $borderColor;
 			box-shadow: $boxShadow;
 
-			.nav-item{
-				.line{
+			.nav-item {
+				.line {
 					width: 0;
 					height: 4rpx;
 					margin: 0 auto;
@@ -158,18 +173,18 @@
 					transition: all 0.1s linear;
 				}
 
-				&.active{
+				&.active {
 					color: $themeColor;
-					.line{
+
+					.line {
 						width: 100%;
 					}
 				}
 			}
 		}
 
-		.order-list{
+		.order-list {
 			padding-bottom: 100rpx;
 		}
 	}
-
 </style>
