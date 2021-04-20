@@ -1,14 +1,14 @@
 <template>
 	<view class="order-module">
 		<view class="header">
-			<view class="resource-name">{{cardData.resourceName}}</view>
-			<text class="order-state">{{orderState[cardData.state]}}</text>
+			<view class="resource-name">{{cardData.gytOrderNo}}</view>
+			<text class="order-state" :style="orderState[cardData.state]['style']">{{orderState[cardData.state]['text']}}</text>
 		</view>
 		<view class="content">
 			<view class="icon"><text class="iconfont icon-geren2"></text></view>
 			<view class="info">
 				<view>{{cardData.orderName}}</view>
-				<view class="paratext">门票种类：{{cardData.ticketType}}</view>
+				<!-- <view class="paratext">门票种类：{{cardData.ticketType}}</view> -->
 				<view class="paratext">出行时间：{{cardData.travelTime}}</view>
 			</view>
 			<view class="price-container">
@@ -20,8 +20,8 @@
 			合计：<text class="total-price">￥{{cardData.totalPrices}}</text>
 		</view>
 		<view class="btn-list">
-			<text class="btn pay">立即付款</text>
-			<text class="btn">取消订单</text>
+			<text class="btn pay" v-if="false">立即付款</text>
+			<text class="btn" v-if="cardData.state == '3'" @click="handleRefund">取消订单</text>
 		</view>
 	</view>
 </template>
@@ -30,25 +30,59 @@
 	export default {
 		data(){
 			return {
-				orderState: ['待付款','待出行','待退款','已退款']
+				orderState: {
+					'2': {
+						text: '待出行',
+						style: {
+							color: '#fc941d'
+						}
+					},
+					'3': {
+						text: '已完成',
+						style: {
+							color: '#2a9938'
+						}
+					},
+					'6': {
+						text: '已退单',
+						style: {
+							color: '#ff0000'
+						}
+					}
+				}
 			}
 		},
 		props: {
 			cardData:{
 				type: Object,
 				default: {
-					resourceName: "南昌欢乐谷",
-					state: 0,
-					orderName: "南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷南昌欢乐谷",
-					ticketType: "成人票门票",
-					travelTime: "2021-04-19",
-					unitPrice: "11220.30",
-					totalPrices: "11220.30",
-					count: 1
+					gytOrderNo: "",
+					state: '0',
+					orderName: "",
+					ticketType: "",
+					travelTime: "",
+					unitPrice: "",
+					totalPrices: "",
+					platNum: "",
+					count: 0
 				}
 			}
+		},
+		methods:{
+			// 退款按钮
+			handleRefund(){
+				console.log('parm3')
+				let platNum = this.cardData.platNum
+				if(platNum){
+					console.log('platNum1',platNum)
+					this.$API.refund(platNum).then(res=>{
+						console.log('ress',res)
+					})
+				}
+			}
+		},
+		mounted(){
 		}
-		
 	}
 </script>
 

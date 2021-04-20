@@ -1,14 +1,14 @@
 import Vue from "vue"
-import Vuex from "vuex" 
+import Vuex from "vuex"
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state:{
 		resourceId: '1341959994957959170',	// 资源产品 Id
-		userId: '',						// 用户 Id
-		resourceName: '',
-		test: "Hello World"
+		userId: '',							// 用户 Id
+		appId: '2021002132633235',			// 小程序 Id
+		resourceName: ''
 	},
 	mutations:{
 		setUserId(state,userId){
@@ -20,7 +20,7 @@ const store = new Vuex.Store({
 		setResourceName(state,resourceName){
 			resourceName && (state.resourceName = resourceName)
 		},
-		
+
 		// 將 vuex 中的数据保存到 storage 中
 		setStorage(state,{key,data}){
 			uni.setStorage({key, data})

@@ -81,13 +81,48 @@ const payRelated = {
 			url: `/order/placeOrder`,
 			data: data
 		})
+	},
+	
+	/**
+	 * 订单退款
+	 * @param {String} platNum - 支付宝订单号 
+	 */
+	refund(platNum){
+		return minReuqest({
+			url: '/pay/refund',
+			method: 'POST',
+			data:{
+				platNum: platNum
+			}
+		})
 	}
 }
 
+// 订单相关
+const order = {
+	/**
+	 * 获取订单列表
+	 * @param {String} userid - 用户 id 
+	 * @param {String} resourceId - 资源 id 
+	 */
+	getOrderList({userId,resourceId}){
+		return minReuqest({
+			url: `/order/orderList`,
+			method: 'GET',
+			header: {"Contype-Type": "application/json"},
+			data: {
+				userid: userId,
+				orderNo: resourceId
+			}
+		})
+	}
+}
 
 export default {
 	// 资源相关
 	...resources,
 	// 支付相关
-	...payRelated	
+	...payRelated,
+	// 订单相关
+	...order
 }

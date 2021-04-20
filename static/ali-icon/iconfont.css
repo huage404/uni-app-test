@@ -18,6 +18,39 @@
   content: "\e611";
 }
 
+
+.icon-gonglve:before {
+  content: "\e603";
+}
+
+.icon-jingdian1:before {
+  content: "\e604";
+}
+
+.icon-yuyue:before {
+  content: "\e62c";
+}
+
+.icon-goupiao:before {
+  content: "\e609";
+}
+
+.icon-gonggao:before {
+  content: "\e6da";
+}
+
+.icon-youjiantou:before {
+  content: "\e60a";
+}
+
+.icon-cha-:before {
+  content: "\e614";
+}
+
+.icon-geren2:before {
+  content: "\e611";
+}
+
 .icon-lujing:before {
   content: "\e625";
 }
@@ -109,4 +142,3 @@
 .icon-hebingxingzhuang1:before {
   content: "\e624";
 }
-

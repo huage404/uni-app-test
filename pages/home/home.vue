@@ -43,90 +43,99 @@
 					</view>
 				</view>
 				<!-- 门票 End -->
-			
+
 				<view class="module" v-if="introduction.length !== 0">
 					<view class="module-title"><text class="icon"></text>景区介绍</view>
 					<rich-text :nodes="introduction"></rich-text>
 				</view>
-				
+
 				<view class="module" v-if="playReadme.length !== 0">
 					<view class="module-title"><text class="icon"></text>预定需知</view>
 					<rich-text :nodes="playReadme"></rich-text>
 				</view>
-				
+
 				<view class="module" v-if="trafficInformation.length !== 0">
 					<view class="module-title"><text class="icon"></text>温馨提示</view>
 					<rich-text :nodes="trafficInformation"></rich-text>
 				</view>
-			
+
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import {getFilePath,htmlToNode} from "../../utils/index.js"
+	import {
+		getFilePath,
+		htmlToNode
+	} from "../../utils/index.js"
 	// import baseImage from "@/static/base-image.jpg"
-	import {mapState,mapActions,mapMutations} from "vuex"
+	import {
+		mapState,
+		mapActions,
+		mapMutations
+	} from "vuex"
 
 	export default {
 		data() {
 			return {
-				baseInfo: {}, 		// 基本信息				
-				bannerList: [], 	// 轮播图
-				ticketsList: [], 	// 门票列表
+				baseInfo: {}, // 基本信息
+				bannerList: [], // 轮播图
+				ticketsList: [], // 门票列表
 				navList: [{
-					"icon": "icon-goupiao",
-					"text": "自助购票"
-				},
-				{
-					"icon": "icon-jingdian",
-					"text": "景区介绍"
-				},
-				{
-					"icon": "icon-yuyue",
-					"text": "预订须知"
-				},
-				{
-					"icon": "icon-lujing",
-					"text": "温馨提示"
-				}
-			],		// 导航
-				introduction: [], 	// 景区介绍
-				playReadme: [], 	// 预定需知
-				trafficInformation: [], 	// 温馨提示
+						"icon": "icon-goupiao",
+						"text": "自助购票"
+					},
+					{
+						"icon": "icon-jingdian1",
+						"text": "景区介绍"
+					},
+					{
+						"icon": "icon-yuyue",
+						"text": "预订须知"
+					},
+					{
+						"icon": "icon-gonglve",
+						"text": "温馨提示"
+					}
+				], // 导航
+				introduction: [], // 景区介绍
+				playReadme: [], // 预定需知
+				trafficInformation: [], // 温馨提示
 			}
 		},
-		computed:{
-			...mapState(['resourceId','userId'])
+		computed: {
+			...mapState(['resourceId', 'userId'])
 		},
 		onLoad() {
 			this.init()
 		},
 		methods: {
-			...mapActions(['setUserIdSync','setResourceId','setResourceNameSync']),
+			...mapActions(['setUserIdSync', 'setResourceId', 'setResourceNameSync']),
 			...mapMutations(['setResourceId']),
-			init(){
+			init() {
 				this.getTicketData()
 				this.login()
 			},
-			
+
 			// 获取景点门票数据
-			getTicketData(){
-				this.$API.getTicketData(this.resourceId).then(({data}) => {
-					
+			getTicketData() {
+				this.$API.getTicketData(this.resourceId).then(({
+					data
+				}) => {
+
 					this.baseInfo = {
 						title: data.scenicName,
 						time: data.openTime,
 						address: data.address
 					}
 					this.bannerList = data.resourcePictures
-					
+
 					this.setResourceNameSync(data.scenicName)
-										
-					handleListProductTickets.call(this,data.listProductTickets)
-					handleResourceScenicInfo.call(this,data.resourceScenicInfo)
-					
+
+					handleListProductTickets.call(this, data.listProductTickets)
+					handleResourceScenicInfo.call(this, data.resourceScenicInfo)
+
 					uni.setStorage({
 						key: 'tcketData',
 						data: data
@@ -137,38 +146,51 @@
 						this.bannerList.push(baseImage)
 					} */
 				})
-				
+
 				/**
 				 * 处理资源风景信息
 				 * @description 将资源信息处理成支持 rich-text 的数据格式，并渲染到页面
-				 * @param {Object} resourceScenicInfo 
+				 * @param {Object} resourceScenicInfo
 				 */
-				function handleResourceScenicInfo(resourceScenicInfo){
-					const {introduction,playReadme,trafficInformation} = resourceScenicInfo
-					
+				function handleResourceScenicInfo(resourceScenicInfo) {
+					const {
+						introduction,
+						playReadme,
+						trafficInformation
+					} = resourceScenicInfo
+
 					const introductionNode = htmlToNode(introduction)
 					const playReadmeNode = htmlToNode(playReadme)
 					const trafficInformationNode = htmlToNode(trafficInformation)
-					
+
 					// 渲染到页面
 					this.introduction = introductionNode
 					this.playReadme = playReadmeNode
 					this.trafficInformation = trafficInformationNode
-					
+
 					// 存到缓存中，给 scenic-management 提供数据
-					uni.setStorage({ key: 'introduction', data: introductionNode })
-					uni.setStorage({ key: 'playReadme', data: playReadmeNode })
-					uni.setStorage({ key: 'trafficInformation', data: trafficInformationNode })
+					uni.setStorage({
+						key: 'introduction',
+						data: introductionNode
+					})
+					uni.setStorage({
+						key: 'playReadme',
+						data: playReadmeNode
+					})
+					uni.setStorage({
+						key: 'trafficInformation',
+						data: trafficInformationNode
+					})
 				}
-			
+
 				/**
 				 * 处理产品套餐数据
 				 * @description 过滤掉无库存的门票
 				 */
-				function handleListProductTickets(listProductTickets){
+				function handleListProductTickets(listProductTickets) {
 					let newArr = []
-					listProductTickets.forEach(item=>{
-						if(item.ticketPriceCalendars.length !== 0){
+					listProductTickets.forEach(item => {
+						if (item.ticketPriceCalendars.length !== 0) {
 							newArr.push(item)
 						}
 					})
@@ -179,27 +201,27 @@
 					this.ticketsList = newArr
 				}
 			},
-			
-			login(){
+
+			login() {
 				let that = this
 				uni.login({
 					success(res) {
 						that.getUserId(res.authCode)
-					}	
+					}
 				})
 				this.setResourceId()
 			},
-			
+
 			// 获取用户 userId
-			getUserId(authcode){
+			getUserId(authcode) {
 				this.$API.getPermission({
 					authcode: authcode,
 					resourceId: this.resourceId
-				}).then(res=>{
+				}).then(res => {
 					this.setUserIdSync(res.data.userId)
 				})
 			},
-			
+
 			// 点击导航跳转链接
 			toNavPage(index) {
 				let typeHash = {
@@ -207,32 +229,35 @@
 					'2': 'playReadme',
 					'3': 'trafficInformation'
 				}
-				let url = index === 0 ? `../tickets-list/tickets-list` : `../scenic-management/scenic-management?active=${index-1}&type=${typeHash[index]}`
-				uni.navigateTo({url})
+				let url = index === 0 ? `../tickets-list/tickets-list` :
+					`../scenic-management/scenic-management?active=${index-1}&type=${typeHash[index]}`
+				uni.navigateTo({
+					url
+				})
 			},
-			
+
 			/**
 			 * 返回一个套餐价格
 			 * @description 返回今天之后的第一个套餐价格
-			 * @param {Array} list - 价格数组 
+			 * @param {Array} list - 价格数组
 			 * @return {String}
 			 */
-			getPrice(list){
+			getPrice(list) {
 				let nowTime = new Date().getTime()
 				let newArr = []
-				list.forEach(item=>{
+				list.forEach(item => {
 					let useTime = new Date(item.useDate)
-					if(useTime > nowTime){
+					if (useTime > nowTime) {
 						newArr.push(item)
 					}
 				})
 				return Number(newArr[0]['dealPrice']).toFixed(2)
 			},
-			
-			getFilePath(filePath){
+
+			getFilePath(filePath) {
 				return getFilePath(filePath)
 			}
-		}	
+		}
 	}
 </script>
 
