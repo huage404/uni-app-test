@@ -1,4 +1,8 @@
 <template>
+	<!-- 订单页面
+			页面路径: pages/order
+			功能: 展示用户已支付订单
+	-->
 	<view class="order">
 		<!-- 导航栏 start -->
 		<view class="nav-list">
@@ -54,17 +58,7 @@
 						filterState: '6'
 					}
 				],
-				listData: [{
-					gytOrderNo: '订单号',
-					state: '3',
-					orderName: '订单名字',
-					travelTime: '出行时间',
-					unitPrice: '订单单价',
-					totalPrices: '订单总价',
-					ticketType: '3',
-					platNum: '支付宝订单号',
-					count: 1
-				}],
+				listData: [],
 				filterListData: [],
 				showList: true
 			}
@@ -82,9 +76,7 @@
 						userId: this.userId,
 						resourceId: this.resourceId
 					}
-					this.$API.getOrderList(param).then(({
-						data
-					}) => {
+					this.$API.getOrderList(param).then(({ data }) => {
 						this.listData = data.map(item => {
 							return {
 								gytOrderNo: item.gytOrderNo,
@@ -97,6 +89,10 @@
 								platNum: item.platNum,
 								count: 1
 							}
+						})
+						// 排序
+						this.listData.sort((a,b)=>{
+							return Number(a.state) - Number(b.state)
 						})
 					}).catch(err => {
 						console.log('error', err)
@@ -141,6 +137,16 @@
 		},
 		mounted() {
 			this.init()
+		},
+		onLoad(){
+			// 注册监听事件
+			uni.$on('updata',()=>{
+				this.init()
+			})
+		},
+		onUnload() {
+			// 移出全局事件
+			uni.$off(['updata'])
 		}
 	}
 </script>

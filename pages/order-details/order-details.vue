@@ -10,22 +10,23 @@
 			<view class="order-date">
 				<view>出行时间</view>
 				<view class="order-date-list">
-					<view v-for="(date, index) in dataList" :class="{active: activeTime === index}" @click="changeActiveTime(index)" :key="index">{{date}}</view>
+					<view v-for="(date, index) in dataList" :class="{active: activeTime === index}"
+						@click="changeActiveTime(index)" :key="index">{{date}}</view>
 				</view>
 			</view>
-			<view class="ticket">
-				<view class="info">
-					<view>{{ticketList.productName}}</view>
-					<view class="price">￥{{ticketList.price}}</view>
-				</view>
-				<view class="number">
-					<view class="btn left" @click="reduceCount(item)">-</view>
-					<view class="num">{{ticketList.number}}</view>
-					<view class="btn right" @click="addCount(item)">+</view>
-				</view>
+
+		</view>
+		<view class="ticket">
+			<view class="info">
+				<view>{{ticketList.productName}}</view>
+				<view class="price">￥{{ticketList.price}}</view>
+			</view>
+			<view class="number">
+				<view class="btn left" @click="reduceCount(item)">-</view>
+				<view class="num">{{ticketList.number}}</view>
+				<view class="btn right" @click="addCount(item)">+</view>
 			</view>
 		</view>
-		
 		<!-- 旅客信息 -->
 		<!-- <view class="module">
 			<view class="title">旅客信息</view>
@@ -43,32 +44,36 @@
 				</view>
 				<text class="iconfont icon-cha-"></text>
 			</view>
-		</view>	 -->	
-		
+		</view>	 -->
+
 		<view class="module">
 			<view class="title">出行人</view>
 			<view class="cell">
 				<text class="label">姓名</text>
-				<input class="input-text" placeholder-class="placeholder-style" type="text" v-model="ticketOrderParam.orderTouristList[0]['name']" placeholder="请填写您的姓名">
+				<input class="input-text" placeholder-class="placeholder-style" type="text"
+					v-model="ticketOrderParam.orderTouristList[0]['name']" placeholder="请填写您的姓名">
 			</view>
 			<view class="cell">
 				<text class="label">电话号码</text>
-				<input class="input-text" placeholder-class="placeholder-style" type="number" v-model="ticketOrderParam.orderTouristList[0]['phone']" placeholder="请填写您的电话号码">
+				<input class="input-text" placeholder-class="placeholder-style" type="number"
+					v-model="ticketOrderParam.orderTouristList[0]['phone']" placeholder="请填写您的电话号码">
 			</view>
 			<view class="cell">
 				<text class="label">证件类型</text>
-				<input class="input-text" disabled="disabled" placeholder-class="placeholder-style" type="number" v-model="ticketOrderParam.orderTouristList[0]['certType']" placeholder="请选择您的证件类型">
+				<input class="input-text" disabled="disabled" placeholder-class="placeholder-style" type="text"
+					v-model="ticketOrderParam.orderTouristList[0]['certType']" placeholder="请选择您的证件类型">
 			</view>
 			<view class="cell">
 				<text class="label">证件号</text>
-				<input class="input-text" placeholder-class="placeholder-style" type="number" v-model="ticketOrderParam.orderTouristList[0]['certNo']" placeholder="请填写您证件号码">
+				<input class="input-text" placeholder-class="placeholder-style" type="number"
+					v-model="ticketOrderParam.orderTouristList[0]['certNo']" placeholder="请填写您证件号码">
 			</view>
 		</view>
-		
+
 		<view class="module">
 			<view class="cell">
 				<text class="label">留言</text>
-				<input class="input-text" placeholder-class="placeholder-style" type="number" placeholder="选填您的备注信息">
+				<input class="input-text" placeholder-class="placeholder-style" type="text" placeholder="选填您的备注信息">
 			</view>
 		</view>
 
@@ -84,9 +89,13 @@
 </template>
 
 <script>
-	import {request} from '../../utils/request.js'
-	import {mapState} from "vuex"
-	
+	import {
+		request
+	} from '../../utils/request.js'
+	import {
+		mapState
+	} from "vuex"
+
 	export default {
 		data() {
 			return {
@@ -94,55 +103,54 @@
 				ticketList: {
 					productName: '',
 					price: 0,
-					number: 0
+					number: 1
 				},
 				activeTime: 0,
 				ticketOrderParam: {
-					commPric: "0.01", 			// 订单总价
-					tradeName: "", 			// 景区名称
-					resourceId: "", 		// 景区Id
-					userId: "", 			// 用户登陆后的 userId
-					orderContactList: [ 	// 订单联系人列表
+					commPric: "0.01", // 订单总价
+					tradeName: "", // 景区名称
+					resourceId: "", // 景区Id
+					userId: "", // 用户登陆后的 userId
+					orderContactList: [ // 订单联系人列表
 						{
-							name: "", 		// 联系人姓名
-							phone: "" 		// 联系人电话
+							name: "", // 联系人姓名
+							phone: "" // 联系人电话
 						}
 					],
-					orderTicket: { 			// 订单联系人列表
-						orderMemo: "", 		// 备忘录
-						orderQuantity: 1, 	// 订单数
-						travelDate: "", 		// 出行时间
-						
-						productCode: "" 	// 产品编号（门票编码）
+					orderTicket: { // 订单联系人列表
+						orderMemo: "", // 备忘录
+						orderQuantity: 1, // 订单数
+						travelDate: "", // 出行时间
+
+						productCode: "" // 产品编号（门票编码）
 					},
-					orderTouristList: [
-						{ 	// 游客列表
-							certNo: "", 		// 证件号
-							certType: "", 		// 证件类型
-							name: "", 			// 游客姓名
-							phone: "" 			// 游客电话
-						}
-					]
+					orderTouristList: [{ // 游客列表
+						certNo: "", // 证件号
+						certType: "身份证", // 证件类型
+						name: "", // 游客姓名
+						phone: "" // 游客电话
+					}]
 				}
 			};
 		},
 		computed: {
-			...mapState(['resourceId','test','userId','resourceName']),
+			...mapState(['resourceId', 'test', 'userId', 'resourceName']),
 			// 出行时间数组，默认返回近三天的时间
-			dataList(){
+			dataList() {
 				let nowDate = new Date()
-				function addZero(num){
+
+				function addZero(num) {
 					return num < 9 ? `0${num}` : num
-				}	
+				}
 				let dataList = []
 				let time = 0;
-				for(let i=0; i<3;i++){
+				for (let i = 0; i < 3; i++) {
 					// 年
 					let year = nowDate.getFullYear()
 					// 月
-					let month = nowDate.getMonth()+1
+					let month = nowDate.getMonth() + 1
 					// 日
-					let day = nowDate.getDate()	+ time
+					let day = nowDate.getDate() + time
 					time += 1
 					dataList.push(`${year}-${addZero(month)}-${addZero(day)}`)
 				}
@@ -155,64 +163,80 @@
 				return total
 			}
 		},
-		onLoad(option){
+		onLoad(option) {
+			let {index,productCode} = option
 			// 从内存中读取门票数据
 			let data = uni.getStorageSync('ticketsList')
-		    this.orderName = data[option.index]['productName']
+			this.orderName = data[index]['productName']
 			this.ticketList = {
-				productName: data[option.index]['productName'],
-				price: this.getPrice(data[option.index]['ticketPriceCalendars']),
-				number: 0
+				productName: data[index]['productName'],
+				price: this.getPrice(data[index]['ticketPriceCalendars']),
+				number: 1
 			}
+			this.ticketOrderParam.orderTicket.productCode = productCode
 		},
-		
+
 		methods: {
 			// 增加数量
 			addCount(item) {
-				this.ticketList.number+=1
+				this.ticketList.number += 1
 			},
 			// 减少数量
 			reduceCount(item) {
-				if(this.ticketList.number > 0){
-					this.ticketList.number-=1
+				if (this.ticketList.number > 0) {
+					this.ticketList.number -= 1
 				}
 			},
-			aliPay(){
-				
+			aliPay() {
+
 				// 将出行人电话同步到联系人
 				this.ticketOrderParam.orderContactList[0].name = this.ticketOrderParam.orderTouristList[0].name
 				this.ticketOrderParam.orderContactList[0].phone = this.ticketOrderParam.orderTouristList[0].phone
-				
+
 				// 从 vuex 中读取资源参数
-				this.ticketOrderParam.tradeName = this.resourceName		// 资源名
-				this.ticketOrderParam.resourceId = this.resourceId		// 资源 id
-				this.ticketOrderParam.userId = this.userId				// 用户 id
-				
+				this.ticketOrderParam.tradeName = this.resourceName // 资源名
+				this.ticketOrderParam.resourceId = this.resourceId // 资源 id
+				this.ticketOrderParam.userId = this.userId // 用户 id
+
 				// 同步总价格
-				// this.ticketOrderParam.commPric = this.totalPrices
-				
-				// 1. 创建支付订单
-				this.$API.payOrder(this.ticketOrderParam).then(response=>{
+				this.ticketOrderParam.commPric = this.totalPrices
+				// 同步订单数量
+				this.ticketOrderParam.orderTicket.orderQuantity = this.ticketList.number
+
+				console.log('订单参数', this.ticketOrderParam)
+
+				if(this.ticketOrderParam.orderTouristList[0].name && 
+				   this.ticketOrderParam.orderTouristList[0].phone && 
+				   this.ticketOrderParam.orderTouristList[0].certNo){
+					// 1. 创建支付订单
+					this.$API.payOrder(this.ticketOrderParam).then(response=>{
 					
-					/**
-					 * @param {String} tradeNo - 支付宝订单号 
-					 * @param {String} outTradeNo - 赣游通订单号
-					 */
-					let [tradeNo,outTradeNo] = response.msg.split('out_trade_no:')
-					console.log('abc0',tradeNo,outTradeNo)
+						/**
+						 * @param {String} tradeNo - 支付宝订单号 
+						 * @param {String} outTradeNo - 赣游通订单号
+						 */
+						let [tradeNo,outTradeNo] = response.msg.split('out_trade_no:')
+						console.log('abc0',tradeNo,outTradeNo)
 					
-					// 2. 发起支付弹窗
-					uni.requestPayment({
-						provider: 'alipay',			// 服务商类型
-						orderInfo: tradeNo		// 支付订单号
-					}).then((res)=>{
-						console.log('res',res)
-						this.showMsg(res[1]['resultCode'],{tradeNo,outTradeNo})
+						// 2. 发起支付弹窗
+						uni.requestPayment({
+							provider: 'alipay',			// 服务商类型
+							orderInfo: tradeNo		// 支付订单号
+						}).then((res)=>{
+							console.log('res',res)
+							this.showMsg(res[1]['resultCode'],{tradeNo,outTradeNo})
+						})
 					})
-				})
+				}else{
+					uni.showModal({
+						content: '请输入出行人信息'
+					})
+				}
+
+				
 			},
 			// 判断用户是否支付成功
-			showMsg(code,param){
+			showMsg(code, param) {
 				const hash = {
 					"4": "无权限调用: 个人小程序应用没有开放小程序支付能力",
 					"9000": "订单处理成功",
@@ -222,11 +246,11 @@
 					"6002": "网络连接出错",
 					"6004": "处理结果未知（有可能已经成功）",
 				}
-				if(code === '9000'){
+				if (code === '9000') {
 					// 3. 支付成功后，修改订单状态
 					this.$API.placeOrder(param)
 				}
-				
+
 				uni.showModal({
 					content: hash[code]
 				})
@@ -237,19 +261,19 @@
 			 * @param {Array} list - 价格数组 
 			 * @return {Number}
 			 */
-			getPrice(list){
+			getPrice(list) {
 				let nowTime = new Date().getTime()
 				let newArr = []
-				list.forEach(item=>{
+				list.forEach(item => {
 					let useTime = new Date(item.useDate)
-					if(useTime > nowTime){
+					if (useTime > nowTime) {
 						newArr.push(item)
 					}
 				})
 				return newArr[0]['dealPrice']
 			},
 			// 切换出行时间
-			changeActiveTime(index){
+			changeActiveTime(index) {
 				this.activeTime = index
 				this.ticketOrderParam.orderTicket.travelDate = this.dataList[index]
 			}
@@ -263,6 +287,7 @@
 
 <style lang="scss" scoped>
 	@import '@/common/globalStyle.scss';
+
 	// 1额23 
 	.center {
 		display: flex;
@@ -295,21 +320,23 @@
 			}
 
 			.order-date {
-				
-				.order-date-list{
+
+				.order-date-list {
 					display: flex;
 					justify-content: space-around;
 					align-items: center;
 					margin-top: 12rpx;
-					view{
-						$color-gy: rgba(0,0,0,.5);
+
+					view {
+						$color-gy: rgba(0, 0, 0, .5);
 						$color-active: #fc941d;
-						
+
 						border: 2rpx solid $color-gy;
-						padding: 10rpx 20rpx;
+						padding: 8rpx 16rpx;
 						border-radius: 4rpx;
 						color: $color-gy;
-						&.active{
+
+						&.active {
 							color: #FFFFFF;
 							border-color: $color-active;
 							background-color: $color-active;
@@ -317,84 +344,86 @@
 					}
 				}
 			}
+		}
 
-			.ticket {
-				$red: #ee0a24;
+		.ticket {
+			$red: #ee0a24;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+			.info {
+				flex: 7;
+
+				.price {
+					color: $red;
+					font-weight: bold;
+				}
+			}
+
+			.number {
+				flex: 1;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 
-				.info {
-					flex: 7;
-
-					.price {
-						color: $red;
-						font-weight: bold;
-					}
+				.num {
+					margin: 0 10rpx;
 				}
 
-				.number {
-					flex: 1;
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
+				.btn {
+					@extend .center;
+					width: 40rpx;
+					height: 40rpx;
+					color: #fff;
+					border-radius: 50%;
+					font-weight: bold;
 
-					.num {
-						margin: 0 10rpx;
+					&.left {
+						color: $red;
+						border: 1rpx solid $red;
 					}
 
-					.btn {
-						@extend .center;
-						width: 40rpx;
-						height: 40rpx;
-						color: #fff;
-						border-radius: 50%;
-						font-weight: bold;
-
-						&.left {
-							color: $red;
-							border: 1rpx solid $red;
-						}
-
-						&.right {
-							background: $red;
-						}
+					&.right {
+						background: $red;
 					}
 				}
 			}
 		}
 	}
 
-	
+
 	.module {
 		.title {
 			font-size: 28rpx;
 		}
+
 		.cell {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-		
+
 			.label {
 				flex: 1;
 				font-size: 24rpx;
 			}
-		
+
 			.input-text {
 				flex: 3;
 				font-size: 24rpx;
 			}
-		
+
 			/deep/ .placeholder-style {
 				font-size: 24rpx;
 			}
-			
-			.right-text{
+
+			.right-text {
 				font-size: 24rpx;
 				display: flex;
 				align-items: center;
-				color: rgba(0,0,0,.5);
-				.iconfont{
+				color: rgba(0, 0, 0, .5);
+
+				.iconfont {
 					font-size: inherit;
 				}
 			}
@@ -433,7 +462,7 @@
 		}
 	}
 
-	.m-r-20{
+	.m-r-20 {
 		margin-right: 20rpx;
 	}
 </style>

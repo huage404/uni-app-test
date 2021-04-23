@@ -90,7 +90,7 @@ const payRelated = {
 	refund(platNum){
 		return minReuqest({
 			url: '/pay/refund',
-			method: 'POST',
+			method: 'GET',
 			data:{
 				platNum: platNum
 			}

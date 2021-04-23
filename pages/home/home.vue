@@ -120,10 +120,7 @@
 
 			// 获取景点门票数据
 			getTicketData() {
-				this.$API.getTicketData(this.resourceId).then(({
-					data
-				}) => {
-
+				this.$API.getTicketData(this.resourceId).then(({data}) => {
 					this.baseInfo = {
 						title: data.scenicName,
 						time: data.openTime,
@@ -142,9 +139,9 @@
 					})
 				}).finally(() => {
 					// 当返回数据中，没有图片信息，则给予一张默认图片用于展示
-					/* if (this.bannerList.length === 0) {
+					if (this.bannerList.length === 0) {
 						this.bannerList.push(baseImage)
-					} */
+					}
 				})
 
 				/**
@@ -198,7 +195,7 @@
 						key: 'ticketsList',
 						data: newArr
 					})
-					this.ticketsList = newArr
+					this.ticketsList = newArr.splice(0,3)
 				}
 			},
 
@@ -213,13 +210,13 @@
 			},
 
 			// 获取用户 userId
-			getUserId(authcode) {
-				this.$API.getPermission({
+			async getUserId(authcode) {
+				let param = {
 					authcode: authcode,
 					resourceId: this.resourceId
-				}).then(res => {
-					this.setUserIdSync(res.data.userId)
-				})
+				}
+				let {data} = await this.$API.getPermission(param)
+				this.setUserIdSync(data.userId)
 			},
 
 			// 点击导航跳转链接
@@ -243,15 +240,7 @@
 			 * @return {String}
 			 */
 			getPrice(list) {
-				let nowTime = new Date().getTime()
-				let newArr = []
-				list.forEach(item => {
-					let useTime = new Date(item.useDate)
-					if (useTime > nowTime) {
-						newArr.push(item)
-					}
-				})
-				return Number(newArr[0]['dealPrice']).toFixed(2)
+				return Number(list[0]['dealPrice']).toFixed(2)
 			},
 
 			getFilePath(filePath) {

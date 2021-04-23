@@ -31,9 +31,9 @@
 					"userId": "",							// 用户 ID（通过登陆获取）
 					
 					"orderTicket": { 						// 订单的基本信息
-						"orderMemo": "订单备注", 			// 订单备注
-						"orderQuantity": 1,					// 订单数量
-						"travelDate": "2021-04-20 12:12:12", 		// date 游玩时间
+						"orderMemo": "", 			// 订单备注
+						"orderQuantity": 2,					// 订单数量
+						"travelDate": "2021-04-20", 		// date 游玩时间
 						
 						"productCode": "MP2765116212", 		// 产品编码
 						// "originType": "1", 				// 默认传1
@@ -99,13 +99,12 @@
 				this.ticketOrderParam.userId = this.userId
 
 				this.$API.payOrder(this.ticketOrderParam).then(response => {
-					
-					console.log('this is handle')
 					let [tradeNo, outTradeNo] = response.msg.split('out_trade_no:')
 					uni.requestPayment({
 						provider: 'alipay', // 服务商类型
 						orderInfo: tradeNo // 支付订单号
 					}).then((res) => {
+						console.log('支付宝返回',res)
 						if (res[1]['resultCode'] === '9000') {
 							// 3. 支付成功后，修改订单状态
 							this.$API.placeOrder({

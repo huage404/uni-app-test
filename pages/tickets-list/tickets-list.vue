@@ -16,7 +16,7 @@
 				<view class="tickets" v-for="(item,index) in ticketsList" :key="index">
 					<text class="tickets-info">{{item.productName}}</text>
 					<text class="price">￥{{getPrice(item.ticketPriceCalendars)}}</text>
-					<button size="mini" @click="toOrderDetails(index)">立即购买</button>
+					<button size="mini" @click="toOrderDetails(index,item.productCode)">立即购买</button>
 				</view>
 			</view>
 		</view>
@@ -41,11 +41,11 @@
 		},
 		methods:{
 			init(){
-				this.ticketsList = uni.getStorageSync('ticketsList')
+				this.ticketsList = uni.getStorageSync('ticketsList').splice(0,3)
 			},
-			toOrderDetails(index){				
+			toOrderDetails(index,productCode){				
 				uni.navigateTo({
-					url: `../order-details/order-details?index=${index}`
+					url: `../order-details/order-details?index=${index}&productCode=${productCode}`
 				})
 			},
 			
@@ -56,15 +56,7 @@
 			 * @return {Number}
 			 */
 			getPrice(list){
-				let nowTime = new Date().getTime()
-				let newArr = []
-				list.forEach(item=>{
-					let useTime = new Date(item.useDate)
-					if(useTime > nowTime){
-						newArr.push(item)
-					}
-				})
-				return Number(newArr[0]['dealPrice']).toFixed(2)
+				return Number(list[0]['dealPrice']).toFixed(2)
 			}
 		}
 	}

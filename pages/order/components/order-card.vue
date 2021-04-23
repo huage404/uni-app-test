@@ -30,6 +30,7 @@
 	export default {
 		data() {
 			return {
+				// 订单状态
 				orderState: {
 					'2': {
 						text: '待出行',
@@ -73,15 +74,21 @@
 			handleRefund() {
 				let that = this
 				let platNum = this.cardData.platNum
+				
 				uni.showModal({
 					title: '是否选择退款',
 					content: '发起退款后需要人工审核',
 					success(res) {
 						if (res.confirm) {
 							// 发起退款
-							platNum && that.$API.refund(platNum)
-						} else if (res.cancel) {
-							console.log('用户点击取消')
+							platNum && that.$API.refund(platNum).then(()=>{
+								uni.showModal({
+									content:'申请退款成功'
+								})
+							}).finally(()=>{
+								// 触发 order 页面刷新
+								uni.$emit('updata')
+							})
 						}
 					}
 				})
