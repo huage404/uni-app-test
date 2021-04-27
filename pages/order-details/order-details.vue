@@ -61,7 +61,7 @@
 			<view class="cell">
 				<text class="label">证件类型</text>
 				<input class="input-text" disabled="disabled" placeholder-class="placeholder-style" type="text"
-					v-model="ticketOrderParam.orderTouristList[0]['certType']" placeholder="请选择您的证件类型">
+					:value="ticketOrderParam.orderTouristList[0]['certType']" placeholder="请选择您的证件类型">
 			</view>
 			<view class="cell">
 				<text class="label">证件号</text>
@@ -99,36 +99,36 @@
 	export default {
 		data() {
 			return {
-				orderName: '',
-				ticketList: {
-					productName: '',
-					price: 0,
-					number: 1
+				"orderName": '',
+				"ticketList": {
+					"productName": '',
+					"price": 0,
+					"number": 1
 				},
-				activeTime: 0,
-				ticketOrderParam: {
-					commPric: "0.01", // 订单总价
-					tradeName: "", // 景区名称
-					resourceId: "", // 景区Id
-					userId: "", // 用户登陆后的 userId
-					orderContactList: [ // 订单联系人列表
-						{
-							name: "", // 联系人姓名
-							phone: "" // 联系人电话
-						}
-					],
-					orderTicket: { // 订单联系人列表
-						orderMemo: "", // 备忘录
-						orderQuantity: 1, // 订单数
-						travelDate: "", // 出行时间
+				"activeTime": 0,
+				"ticketOrderParam": {
+					"commPric": "0.01", // 订单价格
+					"tradeName": "", // 资源名
+					"resourceId": "", // 资源 ID
+					"userId": "", // 用户 ID（通过登陆获取）
 
-						productCode: "" // 产品编号（门票编码）
+					"orderTicket": { // 订单的基本信息
+						"orderMemo": "", // 订单备注
+						"orderQuantity": 0, // 订单数量
+						"travelDate": "2021-04-20", // date 游玩时间
+						"productCode": "", // 产品编码
 					},
-					orderTouristList: [{ // 游客列表
-						certNo: "", // 证件号
-						certType: "身份证", // 证件类型
-						name: "", // 游客姓名
-						phone: "" // 游客电话
+
+					"orderContactList": [{ // 联系人列表
+						"name": "", // 联系人姓名
+						"phone": "" // 联系人手机号
+					}],
+
+					"orderTouristList": [{ // 游客列表
+						"certNo": "", // 游客证件号
+						"certType": "身份证", // 游客证件类型（身份证、护照、台胞证、港澳通行证、大陆居民往来台湾通行证） 
+						"name": "", // 游客姓名
+						"phone": "" // 游客手机号
 					}]
 				}
 			};
@@ -164,7 +164,10 @@
 			}
 		},
 		onLoad(option) {
-			let {index,productCode} = option
+			let {
+				index,
+				productCode
+			} = option
 			// 从内存中读取门票数据
 			let data = uni.getStorageSync('ticketsList')
 			this.orderName = data[index]['productName']
@@ -205,35 +208,38 @@
 
 				console.log('订单参数', this.ticketOrderParam)
 
-				if(this.ticketOrderParam.orderTouristList[0].name && 
-				   this.ticketOrderParam.orderTouristList[0].phone && 
-				   this.ticketOrderParam.orderTouristList[0].certNo){
+				if (this.ticketOrderParam.orderTouristList[0].name &&
+					this.ticketOrderParam.orderTouristList[0].phone &&
+					this.ticketOrderParam.orderTouristList[0].certNo) {
 					// 1. 创建支付订单
-					this.$API.payOrder(this.ticketOrderParam).then(response=>{
-					
+					this.$API.payOrder(this.ticketOrderParam).then(response => {
+
 						/**
 						 * @param {String} tradeNo - 支付宝订单号 
 						 * @param {String} outTradeNo - 赣游通订单号
 						 */
-						let [tradeNo,outTradeNo] = response.msg.split('out_trade_no:')
-						console.log('abc0',tradeNo,outTradeNo)
-					
+						let [tradeNo, outTradeNo] = response.msg.split('out_trade_no:')
+						console.log('abc0', tradeNo, outTradeNo)
+
 						// 2. 发起支付弹窗
 						uni.requestPayment({
-							provider: 'alipay',			// 服务商类型
-							orderInfo: tradeNo		// 支付订单号
-						}).then((res)=>{
-							console.log('res',res)
-							this.showMsg(res[1]['resultCode'],{tradeNo,outTradeNo})
+							provider: 'alipay', // 服务商类型
+							orderInfo: tradeNo // 支付订单号
+						}).then((res) => {
+							console.log('res', res)
+							this.showMsg(res[1]['resultCode'], {
+								tradeNo,
+								outTradeNo
+							})
 						})
 					})
-				}else{
+				} else {
 					uni.showModal({
 						content: '请输入出行人信息'
 					})
 				}
 
-				
+
 			},
 			// 判断用户是否支付成功
 			showMsg(code, param) {
@@ -248,9 +254,25 @@
 				}
 				if (code === '9000') {
 					// 3. 支付成功后，修改订单状态
-					this.$API.placeOrder(param)
+					this.$API.placeOrder(param).then(res => {
+						if (res.msg === "订单撤销成功") {
+							uni.showModal({
+								content: '订单支付失败，正在退款',
+								success() {
+									uni.switchTab({
+										url: '/pages/home/home'
+									})
+									window.location.reload()
+								}
+							})
+						}else{
+							uni.switchTab({
+								url: '/pages/home/home'
+							})
+							window.location.reload()
+						}
+					})
 				}
-
 				uni.showModal({
 					content: hash[code]
 				})

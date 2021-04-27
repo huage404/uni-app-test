@@ -1,9 +1,8 @@
 function minReuqest(config){
-	// const BASE_URL = 'https://api.chinay.net:8848'
-	// 测试
-	const BASE_URL = 'http://www.frpgz1.idcfengye.com'
 	// 正式
-	// const BASE_URL = 'http://cesishahe.free.idcfengye.com'
+	const BASE_URL = 'https://api.chinay.net:8848'
+	// 测试
+	// const BASE_URL = 'http://www.frpgz1.idcfengye.com'
 	config.url = BASE_URL + config.url
 	return new Promise(function(resolve,reject){
 		uni.request({...config}).then((data)=>{

@@ -132,10 +132,11 @@
 					this.showList = false
 				} else {
 					this.showList = true
+					this.init()
 				}
 			}
 		},
-		mounted() {
+		onShow() {
 			this.init()
 		},
 		onLoad(){
