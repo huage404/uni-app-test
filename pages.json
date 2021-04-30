@@ -3,7 +3,11 @@
 		{
 			"path": "pages/home/home",
 			"style": {
-				"navigationBarTitleText": "鄱阳湖湿地公园"
+				"navigationBarTitleText": "三清山逍遥谷"
+				// "navigationBarTitleText": "婺源风景区"
+				// "navigationBarTitleText": "上饶灵山景区"
+				// "navigationBarTitleText": "鄱阳湖大草原景区"
+				// "navigationBarTitleText": "景德镇瑶里景区"
 			}
 		},
 		{
@@ -66,7 +70,11 @@
 	
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "鄱阳湖湿地公园",
+		"navigationBarTitleText": "三清山逍遥谷",
+		// "navigationBarTitleText": "婺源风景区",
+		// "navigationBarTitleText": "上饶灵山景区",
+		// "navigationBarTitleText": "鄱阳湖大草原景区",
+		// "navigationBarTitleText": "景德镇瑶里景区",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#FFFFFF"
 	}

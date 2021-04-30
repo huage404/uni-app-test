@@ -81,10 +81,16 @@
 					success(res) {
 						if (res.confirm) {
 							// 发起退款
-							platNum && that.$API.refund(platNum).then(()=>{
-								uni.showModal({
-									content:'申请退款成功'
-								})
+							platNum && that.$API.refund(platNum).then((res)=>{
+								if(res.code === 500){
+									uni.showModal({
+										content:res.msg + '，请联系工作人员'
+									})
+								}else if(res.code === 200){
+									uni.showModal({
+										content: '申请退款成功，请耐心等待'
+									})
+								}
 							}).finally(()=>{
 								// 触发 order 页面刷新
 								uni.$emit('updata')

@@ -1,16 +1,15 @@
 import Vue from "vue"
 import Vuex from "vuex"
 
+import conf from '../config.js'
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-	state:{
-		/* resourceId: '1341959994957959170',	// 测试资源产品 Id
-		appId: '2021002132633235',	// 测试小程序 Id */
-		
-		resourceId: '1347468348069781505',	// 资源产品 Id
+	state:{		
+		resourceId: conf.resourceId,	// 资源产品 Id
 		userId: '',							// 用户 Id
-		appId: '2021002132633235',			// 小程序 Id
+		appId: conf.appId,			// 小程序 Id
 		resourceName: ''
 	},
 	mutations:{

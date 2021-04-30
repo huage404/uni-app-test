@@ -7,15 +7,14 @@
 		<view class="details">
 			<view class="order-name">{{orderName}}</view>
 			<view class="order-rule">暂无</view>
-			<view class="order-date">
-				<view>出行时间</view>
-				<view class="order-date-list">
-					<view v-for="(date, index) in dataList" :class="{active: activeTime === index}"
-						@click="changeActiveTime(index)" :key="index">{{date}}</view>
-				</view>
+			<view class="order-date-list">
+				<view v-for="(date, index) in dataList" :class="{active: activeTime === index}"
+					@click="changeActiveTime(index)" :key="index">{{date}}</view>
 			</view>
 
 		</view>
+
+		<!-- 选择门票数量 -->
 		<view class="ticket">
 			<view class="info">
 				<view>{{ticketList.productName}}</view>
@@ -27,6 +26,14 @@
 				<view class="btn right" @click="addCount(item)">+</view>
 			</view>
 		</view>
+		
+		<view class="order-date">
+			<view>选择出行时间</view>
+			<picker mode="date" :value="date" :start="startDate" :end="endDate" @change="bindDateChange">
+				<view class="uni-input">{{date}}</view>
+			</picker>
+		</view>
+
 		<!-- 旅客信息 -->
 		<!-- <view class="module">
 			<view class="title">旅客信息</view>
@@ -65,7 +72,7 @@
 			</view>
 			<view class="cell">
 				<text class="label">证件号</text>
-				<input class="input-text" placeholder-class="placeholder-style" type="number"
+				<input class="input-text" placeholder-class="placeholder-style" type="text"
 					v-model="ticketOrderParam.orderTouristList[0]['certNo']" placeholder="请填写您证件号码">
 			</view>
 		</view>
@@ -77,13 +84,17 @@
 			</view>
 		</view>
 
+		<view class="need-to-know">
+			<rich-text :nodes="crowd"></rich-text>
+		</view>
+
 		<!-- 底部 tabBar -->
 		<view class="tabBar">
 			<view class="price-container">
 				<text>合计:</text>
 				<text class="price">￥{{totalPrices.toFixed(2)}}</text>
 			</view>
-			<button class="btn" @click="aliPay">立即支付</button>
+			<button class="btn" @click="verify">立即支付</button>
 		</view>
 	</view>
 </template>
@@ -95,10 +106,16 @@
 	import {
 		mapState
 	} from "vuex"
+	import {
+		htmlToNode
+	} from '../../utils/index.js'
 
 	export default {
 		data() {
+			const currentDate = this.getDate({ format: true })
+			
 			return {
+				date: currentDate,
 				"orderName": '',
 				"ticketList": {
 					"productName": '',
@@ -106,6 +123,9 @@
 					"number": 1
 				},
 				"activeTime": 0,
+				// 订票详情
+				"crowd": "",
+				// 订单参数
 				"ticketOrderParam": {
 					"commPric": "0.01", // 订单价格
 					"tradeName": "", // 资源名
@@ -115,7 +135,7 @@
 					"orderTicket": { // 订单的基本信息
 						"orderMemo": "", // 订单备注
 						"orderQuantity": 0, // 订单数量
-						"travelDate": "2021-04-20", // date 游玩时间
+						"travelDate": "", // date 游玩时间
 						"productCode": "", // 产品编码
 					},
 
@@ -135,47 +155,38 @@
 		},
 		computed: {
 			...mapState(['resourceId', 'test', 'userId', 'resourceName']),
-			// 出行时间数组，默认返回近三天的时间
-			dataList() {
-				let nowDate = new Date()
-
-				function addZero(num) {
-					return num < 9 ? `0${num}` : num
-				}
-				let dataList = []
-				let time = 0;
-				for (let i = 0; i < 3; i++) {
-					// 年
-					let year = nowDate.getFullYear()
-					// 月
-					let month = nowDate.getMonth() + 1
-					// 日
-					let day = nowDate.getDate() + time
-					time += 1
-					dataList.push(`${year}-${addZero(month)}-${addZero(day)}`)
-				}
-				return dataList
-			},
 			// 计算总价
 			totalPrices() {
 				let total = this.ticketList.price * this.ticketList.number
 				this.ticketOrderParam.commPric = total
 				return total
+			},
+			startDate() {
+				return this.getDate('start');
+			},
+			endDate() {
+				return this.getDate('end');
 			}
 		},
+
 		onLoad(option) {
-			let {
-				index,
-				productCode
-			} = option
+			let { index, productCode } = option
+
 			// 从内存中读取门票数据
 			let data = uni.getStorageSync('ticketsList')
+
+			// 给套餐详情添加类名，并转换为符合要求的数据格式
+			let crowd = data[index]['crowd'].replace(/\<p/gi, '<p class="text"')
+			this.crowd = htmlToNode(crowd)
+
 			this.orderName = data[index]['productName']
+
 			this.ticketList = {
 				productName: data[index]['productName'],
 				price: this.getPrice(data[index]['ticketPriceCalendars']),
 				number: 1
 			}
+
 			this.ticketOrderParam.orderTicket.productCode = productCode
 		},
 
@@ -190,28 +201,11 @@
 					this.ticketList.number -= 1
 				}
 			},
+			
+			// 发起支付
 			aliPay() {
-
-				// 将出行人电话同步到联系人
-				this.ticketOrderParam.orderContactList[0].name = this.ticketOrderParam.orderTouristList[0].name
-				this.ticketOrderParam.orderContactList[0].phone = this.ticketOrderParam.orderTouristList[0].phone
-
-				// 从 vuex 中读取资源参数
-				this.ticketOrderParam.tradeName = this.resourceName // 资源名
-				this.ticketOrderParam.resourceId = this.resourceId // 资源 id
-				this.ticketOrderParam.userId = this.userId // 用户 id
-
-				// 同步总价格
-				this.ticketOrderParam.commPric = this.totalPrices
-				// 同步订单数量
-				this.ticketOrderParam.orderTicket.orderQuantity = this.ticketList.number
-
 				console.log('订单参数', this.ticketOrderParam)
-
-				if (this.ticketOrderParam.orderTouristList[0].name &&
-					this.ticketOrderParam.orderTouristList[0].phone &&
-					this.ticketOrderParam.orderTouristList[0].certNo) {
-					// 1. 创建支付订单
+					// 创建支付订单
 					this.$API.payOrder(this.ticketOrderParam).then(response => {
 
 						/**
@@ -219,7 +213,6 @@
 						 * @param {String} outTradeNo - 赣游通订单号
 						 */
 						let [tradeNo, outTradeNo] = response.msg.split('out_trade_no:')
-						console.log('abc0', tradeNo, outTradeNo)
 
 						// 2. 发起支付弹窗
 						uni.requestPayment({
@@ -233,14 +226,52 @@
 							})
 						})
 					})
-				} else {
+
+			},
+			
+			// 下单前校验
+			verify(){
+				
+				this.updateParams()
+				
+				let userInfo = this.ticketOrderParam.orderTouristList[0]
+				// 校验出行人信息
+				if (userInfo.name && userInfo.phone && userInfo.certNo){
+					let nowDate = new Date().getTime()
+					let orderTime = new Date(this.date).getTime()
+					if(nowDate < orderTime){
+						this.aliPay()
+					}else{
+						uni.showModal({
+							content: '出行时间必须大于当天时间'
+						})
+					}
+				}else{
 					uni.showModal({
 						content: '请输入出行人信息'
 					})
 				}
-
-
 			},
+			
+			// 更新订单参数
+			updateParams(){
+				// 将出行人电话同步到联系人
+				this.ticketOrderParam.orderContactList[0].name = this.ticketOrderParam.orderTouristList[0].name
+				this.ticketOrderParam.orderContactList[0].phone = this.ticketOrderParam.orderTouristList[0].phone
+				
+				// 从 vuex 中读取资源参数
+				this.ticketOrderParam.tradeName = this.resourceName // 资源名
+				this.ticketOrderParam.resourceId = this.resourceId // 资源 id
+				this.ticketOrderParam.userId = this.userId // 用户 id
+				
+				// 同步总价格
+				this.ticketOrderParam.commPric = this.totalPrices
+				// 同步订单数量
+				this.ticketOrderParam.orderTicket.orderQuantity = this.ticketList.number
+				// 同步订单时间
+				this.ticketOrderParam.orderTicket.travelDate = this.date.split('/').join('-')
+			},
+			
 			// 判断用户是否支付成功
 			showMsg(code, param) {
 				const hash = {
@@ -265,7 +296,7 @@
 									window.location.reload()
 								}
 							})
-						}else{
+						} else {
 							uni.switchTab({
 								url: '/pages/home/home'
 							})
@@ -277,6 +308,7 @@
 					content: hash[code]
 				})
 			},
+			
 			/**
 			 * 返回一个套餐价格
 			 * @description 返回今天之后的第一个套餐价格
@@ -284,25 +316,45 @@
 			 * @return {Number}
 			 */
 			getPrice(list) {
-				let nowTime = new Date().getTime()
+				/* let nowTime = new Date().getTime()
 				let newArr = []
 				list.forEach(item => {
 					let useTime = new Date(item.useDate)
 					if (useTime > nowTime) {
 						newArr.push(item)
 					}
-				})
-				return newArr[0]['dealPrice']
+				}) */
+				return list[0]['dealPrice']
 			},
-			// 切换出行时间
-			changeActiveTime(index) {
-				this.activeTime = index
-				this.ticketOrderParam.orderTicket.travelDate = this.dataList[index]
-			}
+			
+			// 获取当天的日期
+			getDate(type,nowDate) {
+				
+				let date = new Date();
+				
+				if(nowDate){ data = new Date(nowDate) }
+				
+				let year = date.getFullYear();
+				let month = date.getMonth() + 1;
+				let day = date.getDate();
+	
+				if (type === 'start') {
+					year = year - 60;
+				} else if (type === 'end') {
+					year = year + 2;
+				}
+				month = month > 9 ? month : '0' + month;;
+				day = day > 9 ? day : '0' + day;
+				return `${year}-${month}-${day}`;
+			},
+			
+			// 点击切换当天的日期
+			bindDateChange(e){
+				this.date = e.target.value
+			},
 		},
-		mounted() {
-			// 出行时间默认当天
-			this.ticketOrderParam.orderTicket.travelDate = this.dataList[0]
+		onReady() {
+			
 		}
 	}
 </script>
@@ -310,7 +362,6 @@
 <style lang="scss" scoped>
 	@import '@/common/globalStyle.scss';
 
-	// 1额23 
 	.center {
 		display: flex;
 		justify-content: center;
@@ -318,12 +369,25 @@
 	}
 
 	.order-details {
-		padding: $padding;
+		padding: $padding $padding 200rpx;
 		line-height: 1.5;
 
 		>view {
 			@extend .baseContianer;
 			margin-bottom: $padding;
+		}
+
+		.need-to-know {
+			::v-deep .text {
+				font-size: 24rpx;
+			}
+		}
+		
+		.order-date {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 24rpx;
 		}
 
 		.details {
@@ -341,28 +405,26 @@
 				display: none;
 			}
 
-			.order-date {
-
-				.order-date-list {
-					display: flex;
-					justify-content: space-around;
-					align-items: center;
-					margin-top: 12rpx;
-
-					view {
-						$color-gy: rgba(0, 0, 0, .5);
-						$color-active: #fc941d;
-
-						border: 2rpx solid $color-gy;
-						padding: 8rpx 16rpx;
-						border-radius: 4rpx;
-						color: $color-gy;
-
-						&.active {
-							color: #FFFFFF;
-							border-color: $color-active;
-							background-color: $color-active;
-						}
+			
+			.order-date-list {
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
+				margin-top: 12rpx;
+			
+				view {
+					$color-gy: rgba(0, 0, 0, .5);
+					$color-active: #fc941d;
+			
+					border: 2rpx solid $color-gy;
+					padding: 8rpx 16rpx;
+					border-radius: 4rpx;
+					color: $color-gy;
+			
+					&.active {
+						color: #FFFFFF;
+						border-color: $color-active;
+						background-color: $color-active;
 					}
 				}
 			}
@@ -375,19 +437,21 @@
 			align-items: center;
 
 			.info {
-				flex: 7;
+				font-size: 24rpx;
 
 				.price {
 					color: $red;
+					font-size: 32rpx;
 					font-weight: bold;
 				}
 			}
 
 			.number {
-				flex: 1;
+				width: 140rpx;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
+				margin-left: 20rpx;
 
 				.num {
 					margin: 0 10rpx;
@@ -453,17 +517,17 @@
 	}
 
 	.tabBar {
-		position: absolute;
+		position: fixed;
 		bottom: -$padding;
 		height: 96rpx;
 		left: 0;
 		width: 100%;
-		border-radius: 0;
+		border-radius: 0 !important;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		box-sizing: border-box;
-
+		border-top: 2rpx solid #f3f3f3;
 		.price-container {
 			font-size: 26rpx;
 
