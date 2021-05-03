@@ -1,5 +1,5 @@
 {
-    "name" : "婺源风景区",
+    "name" : "上饶灵山景区",
     "appid" : "__UNI__91D0280",
     "description" : "",
     "versionName" : "1.0.0",
@@ -58,7 +58,7 @@
     },
     "mp-alipay" : {
         "usingComponents" : true,
-        "appid" : "2021002133672716" // 三清山逍遥谷
+        "appid" : "2021002133623382" // 上饶灵山景区
     },
     "mp-baidu" : {
         "usingComponents" : true
