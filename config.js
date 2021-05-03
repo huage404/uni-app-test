@@ -14,10 +14,12 @@ const testResourceId= '1341959994957959170'
 // 测试小程序 Id
 const testAppId= '2021002132633235'	
 
+/*-----婺源风景区 strat -----*/
 // 资源产品 Id
-const resourceId = '1347468349994967042'
+const resourceId = '1347468369330708481'
 // 小程序 Id
-const appId = '2021002132632626303'
+const appId = '2021002133672716'
+/*-----婺源风景区 end -----*/
 
 
 export default {

@@ -1,5 +1,5 @@
 {
-    "name" : "三清山逍遥谷",
+    "name" : "婺源风景区",
     "appid" : "__UNI__91D0280",
     "description" : "",
     "versionName" : "1.0.0",
@@ -58,7 +58,7 @@
     },
     "mp-alipay" : {
         "usingComponents" : true,
-        "appid" : "2021002132632626303" // 三清山逍遥谷
+        "appid" : "2021002133672716" // 三清山逍遥谷
     },
     "mp-baidu" : {
         "usingComponents" : true
@@ -70,3 +70,4 @@
         "enable" : false
     }
 }
+	
