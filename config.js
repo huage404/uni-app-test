@@ -14,12 +14,12 @@ const testResourceId= '1341959994957959170'
 // 测试小程序 Id
 const testAppId= '2021002132633235'	
 
-/*-----鄱阳湖大草原景区 strat -----*/
+/*-----景德镇瑶里景区 strat -----*/
 // 资源产品 Id
-const resourceId = '1357572469411487746'
+const resourceId = '1347468367946588161'
 // 小程序 Id
-const appId = '2021002133631855'
-/*-----鄱阳湖大草原景区 end -----*/
+const appId = '2021002133637774'
+/*-----景德镇瑶里景区 end -----*/
 
 
 export default {
