@@ -3,7 +3,7 @@
 		{
 			"path": "pages/home/home",
 			"style": {
-				"navigationBarTitleText": "上饶灵山景区"
+				"navigationBarTitleText": "鄱阳湖大草原景区"
 			}
 		},
 		{
@@ -66,7 +66,7 @@
 	
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "上饶灵山景区",
+		"navigationBarTitleText": "鄱阳湖大草原景区",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#FFFFFF"
 	}

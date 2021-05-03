@@ -14,12 +14,12 @@ const testResourceId= '1341959994957959170'
 // 测试小程序 Id
 const testAppId= '2021002132633235'	
 
-/*-----上饶灵山景区 strat -----*/
+/*-----鄱阳湖大草原景区 strat -----*/
 // 资源产品 Id
-const resourceId = '1347468346635329538'
+const resourceId = '1357572469411487746'
 // 小程序 Id
-const appId = '2021002133623382'
-/*-----上饶灵山景区 end -----*/
+const appId = '2021002133631855'
+/*-----鄱阳湖大草原景区 end -----*/
 
 
 export default {
